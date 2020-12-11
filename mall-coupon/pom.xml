@@ -9,9 +9,9 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>me.lin.mall</groupId>
-	<artifactId>mail-coupon</artifactId>
+	<artifactId>mall-coupon</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>mail-coupon</name>
+	<name>mall-coupon</name>
 	<description>商城-优惠券服务</description>
 
 	<properties>
