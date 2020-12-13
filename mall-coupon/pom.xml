@@ -20,11 +20,11 @@
 	</properties>
 
 	<dependencies>
-		<dependency>
-			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-starter-zipkin</artifactId>
-			<version>2.1.0.RELEASE</version>
-		</dependency>
+<!--		<dependency>-->
+<!--			<groupId>org.springframework.cloud</groupId>-->
+<!--			<artifactId>spring-cloud-starter-zipkin</artifactId>-->
+<!--			<version>2.1.0.RELEASE</version>-->
+<!--		</dependency>-->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-actuator</artifactId>
@@ -54,13 +54,13 @@
 			<groupId>me.lin.mall</groupId>
 			<artifactId>mall-common</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
-			<exclusions>
-				<exclusion>
-					<groupId>com.alibaba.cloud</groupId>
-					<artifactId>spring-cloud-starter-alicloud-oss</artifactId>
-				</exclusion>
-			</exclusions>
-			<scope>compile</scope>
+<!--			<exclusions>-->
+<!--				<exclusion>-->
+<!--					<groupId>com.alibaba.cloud</groupId>-->
+<!--					<artifactId>spring-cloud-starter-alicloud-oss</artifactId>-->
+<!--				</exclusion>-->
+<!--			</exclusions>-->
+<!--			<scope>compile</scope>-->
 		</dependency>
 	</dependencies>
 
