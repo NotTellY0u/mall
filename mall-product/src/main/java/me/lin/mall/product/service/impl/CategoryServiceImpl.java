@@ -38,7 +38,6 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
     public List<CategoryEntity> listWithTree() {
         //1.查出所有分类
         List<CategoryEntity> entities = baseMapper.selectList(null);
-        log.error(String.valueOf(entities));
         //2.组装父子的树形结构
         //2.1).找到所有的一级分类
         List<CategoryEntity> levelOneMenus = entities.stream().filter(categoryEntity ->
@@ -58,7 +57,7 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
      * @param all
      * @return
      */
-    private List<CategoryEntity> getChildrens(CategoryEntity root,List<CategoryEntity> all){
+    private List<CategoryEntity> getChildrens(CategoryEntity root, List<CategoryEntity> all){
         List<CategoryEntity> collect = all.stream().filter(categoryEntity -> {
             return categoryEntity.getParentCid().equals(root.getCatId());
         }).map(categoryEntity -> {
