@@ -6,6 +6,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 
 /**
+ *  * @author Fibonacci
+ *
  * 1.整合Mybatis-Plus
  * 		1）.导入依赖
  *        <dependency>
@@ -19,7 +21,7 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
  * 				2）.在application.yml配置数据源相关信息
  * 			2.配置Mybatis-Plus
  * 				1）.使用@MapperScan
- * 				2）.
+ * 				2）.告诉Mybatis-Plus,sql映射文件位置
  */
 @MapperScan("me.lin.mall.product.dao")
 @EnableDiscoveryClient
