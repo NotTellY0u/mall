@@ -1,6 +1,5 @@
 package me.lin.mall.product;
 
-import com.aliyun.oss.OSSClient;
 import me.lin.mall.product.entity.BrandEntity;
 import me.lin.mall.product.service.BrandService;
 
@@ -22,17 +21,6 @@ class MallProductApplicationTests {
 
 	@Autowired
 	BrandService brandService;
-
-	@Autowired
-	OSSClient ossClient;
-
-	@Test
-	public void testUpload() throws FileNotFoundException {
-		FileInputStream fileInputStream = new FileInputStream("C:\\Users\\yangf\\Pictures\\1.jpg");
-		ossClient.putObject("mall-hello891", "3.jpg", fileInputStream);
-		ossClient.shutdown();
-		System.out.println("上传完成");
-	}
 
 	void contextLoads() {
 		BrandEntity brandEntity = new BrandEntity();
