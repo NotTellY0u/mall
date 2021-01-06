@@ -21,10 +21,10 @@
         <!--            <artifactId>spring-cloud-starter-alibaba-sentinel</artifactId>-->
         <!--            <version>2.1.0.RELEASE</version>-->
         <!--        </dependency>-->
-        <dependency>
-            <groupId>com.alibaba.cloud</groupId>
-            <artifactId>spring-cloud-starter-alicloud-oss</artifactId>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>com.alibaba.cloud</groupId>-->
+<!--            <artifactId>spring-cloud-starter-alicloud-oss</artifactId>-->
+<!--        </dependency>-->
         <dependency>
             <groupId>com.baomidou</groupId>
             <artifactId>mybatis-plus-boot-starter</artifactId>
