@@ -6,7 +6,7 @@
  * 版权所有，侵权必究！
  */
 
-package me.lin.common.exception;
+package me.lin.mall.common.exception;
 
 /**
  * 自定义异常

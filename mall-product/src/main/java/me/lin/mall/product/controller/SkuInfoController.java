@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import me.lin.mall.product.entity.SkuInfoEntity;
 import me.lin.mall.product.service.SkuInfoService;
-import me.lin.common.utils.PageUtils;
-import me.lin.common.utils.R;
+import me.lin.mall.common.utils.PageUtils;
+import me.lin.mall.common.utils.R;
 
 
 

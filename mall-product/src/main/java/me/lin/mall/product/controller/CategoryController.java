@@ -2,19 +2,16 @@ package me.lin.mall.product.controller;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import me.lin.mall.product.entity.CategoryEntity;
 import me.lin.mall.product.service.CategoryService;
-import me.lin.common.utils.PageUtils;
-import me.lin.common.utils.R;
+import me.lin.mall.common.utils.R;
 
 
 

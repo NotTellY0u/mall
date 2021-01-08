@@ -1,7 +1,7 @@
 package me.lin.mall.order.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import me.lin.common.utils.PageUtils;
+import me.lin.mall.common.utils.PageUtils;
 import me.lin.mall.order.entity.MqMessageEntity;
 
 import java.util.Map;

@@ -3,7 +3,7 @@ package me.lin.mall.product.controller;
 import java.util.Arrays;
 import java.util.Map;
 
-import me.lin.common.utils.PageUtils;
+import me.lin.mall.common.utils.PageUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import me.lin.mall.product.entity.AttrEntity;
 import me.lin.mall.product.service.AttrService;
 
-import me.lin.common.utils.R;
+import me.lin.mall.common.utils.R;
 
 
 

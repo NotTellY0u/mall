@@ -1,8 +1,8 @@
 package me.lin.mall.product.exception;
 
 import lombok.extern.slf4j.Slf4j;
-import me.lin.common.exception.BizCodeEnum;
-import me.lin.common.utils.R;
+import me.lin.mall.common.exception.BizCodeEnum;
+import me.lin.mall.common.utils.R;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;

@@ -1,4 +1,4 @@
-package me.lin.common.exception;
+package me.lin.mall.common.exception;
 
 /**
  * @Author Fibonacci

@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import me.lin.mall.ware.entity.WareOrderTaskDetailEntity;
 import me.lin.mall.ware.service.WareOrderTaskDetailService;
-import me.lin.common.utils.PageUtils;
-import me.lin.common.utils.R;
+import me.lin.mall.common.utils.PageUtils;
+import me.lin.mall.common.utils.R;
 
 
 

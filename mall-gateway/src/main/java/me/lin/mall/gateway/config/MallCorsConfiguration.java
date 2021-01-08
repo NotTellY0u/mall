@@ -1,4 +1,4 @@
-package me.lin.mall.mallgateway.config;
+package me.lin.mall.gateway.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

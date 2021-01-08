@@ -1,4 +1,4 @@
-package me.lin.common.xss;
+package me.lin.mall.common.xss;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;

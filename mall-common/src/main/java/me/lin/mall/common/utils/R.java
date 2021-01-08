@@ -1,4 +1,4 @@
-package me.lin.common.utils;
+package me.lin.mall.common.utils;
 
 import org.apache.http.HttpStatus;
 

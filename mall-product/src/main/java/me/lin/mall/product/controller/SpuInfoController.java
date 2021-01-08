@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import me.lin.mall.product.entity.SpuInfoEntity;
 import me.lin.mall.product.service.SpuInfoService;
-import me.lin.common.utils.PageUtils;
-import me.lin.common.utils.R;
+import me.lin.mall.common.utils.PageUtils;
+import me.lin.mall.common.utils.R;
 
 
 

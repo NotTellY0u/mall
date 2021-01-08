@@ -1,6 +1,6 @@
-package me.lin.common.xss;
+package me.lin.mall.common.xss;
 
-import me.lin.common.exception.RRException;
+import me.lin.mall.common.exception.RRException;
 import org.apache.commons.lang.StringUtils;
 
 /**

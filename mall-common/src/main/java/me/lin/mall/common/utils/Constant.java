@@ -1,4 +1,4 @@
-package me.lin.common.utils;
+package me.lin.mall.common.utils;
 
 /**
  * 常量

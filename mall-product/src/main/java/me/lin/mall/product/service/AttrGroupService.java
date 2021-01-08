@@ -1,7 +1,7 @@
 package me.lin.mall.product.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import me.lin.common.utils.PageUtils;
+import me.lin.mall.common.utils.PageUtils;
 import me.lin.mall.product.entity.AttrGroupEntity;
 
 import java.util.Map;

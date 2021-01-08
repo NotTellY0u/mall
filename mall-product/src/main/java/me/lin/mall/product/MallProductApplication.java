@@ -30,8 +30,15 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
  * 		1).给Bean添加校验注解:javax.validation.constraints
  * 		2).开启校验功能@Valid效果，校验错误以后会有默认的响应
  * 		3).给校验的Bean后紧跟一个BindingResult，就可以获取到校验的结果
+ * 		4).分组校验
+ * 			1).@NotBlank(message="品牌名必须校验",groups={AddGroup.class,UpdateGroup.class}
+ * 			   给校验注解标注什么情况需要进行校验
+ * 			2).@Validated({AddGroup.class})
+ * 			3).默认没有指定分组的校验注解@NotBlank，在分组校验的情况下不生效
  * 	4.统一的异常处理
  * @ControllerAdvice
+ * 		1).编写异常处理类，使用@ControllerAdvice注解
+ * 		2).使用@ExceptionHandler标注方法可以处理的异常
  */
 
 @MapperScan("me.lin.mall.product.dao")

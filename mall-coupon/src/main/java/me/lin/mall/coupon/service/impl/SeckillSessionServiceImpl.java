@@ -5,8 +5,8 @@ import java.util.Map;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import me.lin.common.utils.PageUtils;
-import me.lin.common.utils.Query;
+import me.lin.mall.common.utils.PageUtils;
+import me.lin.mall.common.utils.Query;
 
 import me.lin.mall.coupon.dao.SeckillSessionDao;
 import me.lin.mall.coupon.entity.SeckillSessionEntity;

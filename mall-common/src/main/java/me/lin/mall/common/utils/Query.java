@@ -1,10 +1,10 @@
-package me.lin.common.utils;
+package me.lin.mall.common.utils;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.metadata.OrderItem;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 
-import me.lin.common.xss.SQLFilter;
+import me.lin.mall.common.xss.SQLFilter;
 import org.apache.commons.lang.StringUtils;
 
 import java.util.Map;

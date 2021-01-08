@@ -1,6 +1,6 @@
 package me.lin.mall.member.feign;
 
-import me.lin.common.utils.R;
+import me.lin.mall.common.utils.R;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.RequestMapping;
 

@@ -1,7 +1,7 @@
 package me.lin.mall.ware.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import me.lin.common.utils.PageUtils;
+import me.lin.mall.common.utils.PageUtils;
 import me.lin.mall.ware.entity.PurchaseDetailEntity;
 
 import java.util.Map;
