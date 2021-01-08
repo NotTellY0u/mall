@@ -1,24 +1,18 @@
 package me.lin.mall.product.controller;
 
-import java.util.Arrays;
-import java.util.Map;
-
-import me.lin.mall.common.valid.AddGroup;
-import me.lin.mall.common.valid.UpdateGroup;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
-import me.lin.mall.product.entity.BrandEntity;
-import me.lin.mall.product.service.BrandService;
 import me.lin.mall.common.utils.PageUtils;
 import me.lin.mall.common.utils.R;
+import me.lin.mall.common.valid.AddGroup;
+import me.lin.mall.common.valid.UpdateGroup;
+import me.lin.mall.common.valid.UpdateStatusGroup;
+import me.lin.mall.product.entity.BrandEntity;
+import me.lin.mall.product.service.BrandService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
+import java.util.Arrays;
+import java.util.Map;
 
 
 /**
@@ -84,6 +78,16 @@ public class BrandController {
     @RequestMapping("/update")
     public R update(@Validated({UpdateGroup.class}) @RequestBody BrandEntity brand){
 		brandService.updateById(brand);
+
+        return R.ok();
+    }
+
+    /**
+     * 修改状态
+     */
+    @RequestMapping("/update/status")
+    public R updateStatus(@Validated({UpdateStatusGroup.class}) @RequestBody BrandEntity brand){
+        brandService.updateById(brand);
 
         return R.ok();
     }
