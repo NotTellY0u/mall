@@ -30,6 +30,8 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
  * 		1).给Bean添加校验注解:javax.validation.constraints
  * 		2).开启校验功能@Valid效果，校验错误以后会有默认的响应
  * 		3).给校验的Bean后紧跟一个BindingResult，就可以获取到校验的结果
+ * 	4.统一的异常处理
+ * @ControllerAdvice
  */
 
 @MapperScan("me.lin.mall.product.dao")
