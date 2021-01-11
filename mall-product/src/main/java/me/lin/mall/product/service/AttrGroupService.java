@@ -15,6 +15,19 @@ import java.util.Map;
  */
 public interface AttrGroupService extends IService<AttrGroupEntity> {
 
+    /**
+     *
+     * @param params
+     * @return PageUtils
+     */
     PageUtils queryPage(Map<String, Object> params);
+
+    /**
+     *
+     * @param params
+     * @param catelogId
+     * @return pageUtils
+     */
+    PageUtils queryPage(Map<String, Object> params, Long catelogId);
 }
 
