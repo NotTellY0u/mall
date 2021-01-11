@@ -3,6 +3,7 @@ package me.lin.mall.product.service.impl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -57,6 +58,23 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
         baseMapper.deleteBatchIds(asList);
     }
 
+    @Override
+    public Long[] findCatelogPath(Long catelogId) {
+        List<Long> path = new ArrayList<>();
+
+        findParentPah(catelogId,path);
+
+        return (Long[]) path.toArray();
+    }
+
+    private List<Long> findParentPah(Long catelogId,List<Long> path){
+        boolean add = path.add(catelogId);
+        CategoryEntity byId = this.getById(catelogId);
+        if(byId.getParentCid() != 0){
+            findParentPah(byId.getParentCid(),path);
+        }
+        return path;
+    }
     /**
      * 递归查找所有菜单的子菜单
      * @param root
