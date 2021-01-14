@@ -23,7 +23,6 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.w3c.dom.Attr;
 
 import java.util.List;
 import java.util.Map;
@@ -67,10 +66,12 @@ public class AttrServiceImpl extends ServiceImpl<AttrDao, AttrEntity> implements
         //1.保存基本数据
         this.save(attrEntity);
         //2.保存关联关系
-        AttrAttrgroupRelationEntity relationEntity = new AttrAttrgroupRelationEntity();
-        relationEntity.setAttrGroupId(attr.getAttrGroupId());
-        relationEntity.setAttrId(attrEntity.getAttrId());
-        relationDao.insert(relationEntity);
+        if(attr.getAttrType() == 1) {
+            AttrAttrgroupRelationEntity relationEntity = new AttrAttrgroupRelationEntity();
+            relationEntity.setAttrGroupId(attr.getAttrGroupId());
+            relationEntity.setAttrId(attrEntity.getAttrId());
+            relationDao.insert(relationEntity);
+        }
 
     }
 
@@ -79,11 +80,12 @@ public class AttrServiceImpl extends ServiceImpl<AttrDao, AttrEntity> implements
      *
      * @param params    查询条件
      * @param catelogId 三级分类id
+     * @param type      属性类型
      * @return 规格参数
      */
     @Override
-    public PageUtils queryBaseAttrPage(Map<String, Object> params, Long catelogId) {
-        QueryWrapper<AttrEntity> queryWrapper = new QueryWrapper<>();
+    public PageUtils queryBaseAttrPage(Map<String, Object> params, Long catelogId, String type) {
+        QueryWrapper<AttrEntity> queryWrapper = new QueryWrapper<AttrEntity>().eq("attr_type", "base".equalsIgnoreCase(type) ? 1 : 0);
         if (catelogId != 0) {
             queryWrapper.eq("catelog_id", catelogId);
         }
@@ -105,13 +107,14 @@ public class AttrServiceImpl extends ServiceImpl<AttrDao, AttrEntity> implements
             // 1.设置分类和分组的名字
 
             //设置分组名字
-            AttrAttrgroupRelationEntity attrId = relationDao.selectOne(new QueryWrapper<AttrAttrgroupRelationEntity>().eq("attr_id", attrEntity.getAttrId()));
-            if (attrId != null) {
-                Long attrGroupId = attrId.getAttrGroupId();
-                AttrGroupEntity attrGroupEntity = attrGroupDao.selectById(attrGroupId);
-                attrRespVo.setGroupName(attrGroupEntity.getAttrGroupName());
+            if ("base".equalsIgnoreCase(type)) {
+                AttrAttrgroupRelationEntity attrId = relationDao.selectOne(new QueryWrapper<AttrAttrgroupRelationEntity>().eq("attr_id", attrEntity.getAttrId()));
+                if (attrId != null) {
+                    Long attrGroupId = attrId.getAttrGroupId();
+                    AttrGroupEntity attrGroupEntity = attrGroupDao.selectById(attrGroupId);
+                    attrRespVo.setGroupName(attrGroupEntity.getAttrGroupName());
+                }
             }
-
             //设置分类名字
             CategoryEntity categoryEntity = categoryDao.selectById(attrEntity.getCatelogId());
             if (categoryEntity != null) {
@@ -168,16 +171,16 @@ public class AttrServiceImpl extends ServiceImpl<AttrDao, AttrEntity> implements
     @Override
     public void updateAttr(AttrVo attr) {
         AttrEntity attrEntity = new AttrEntity();
-        BeanUtils.copyProperties(attr,attrEntity);
+        BeanUtils.copyProperties(attr, attrEntity);
         this.updateById(attrEntity);
         AttrAttrgroupRelationEntity relationEntity = new AttrAttrgroupRelationEntity();
         relationEntity.setAttrGroupId(attr.getAttrGroupId());
         relationEntity.setAttrId(attr.getAttrId());
         //1.修改分组关联
         Integer count = relationDao.selectCount(new QueryWrapper<AttrAttrgroupRelationEntity>().eq("attr_id", attr.getAttrId()));
-        if(count > 0){
+        if (count > 0) {
             relationDao.update(relationEntity, new UpdateWrapper<AttrAttrgroupRelationEntity>().eq("attr_id", attr.getAttrId()));
-        }else {
+        } else {
             relationDao.insert(relationEntity);
         }
 
