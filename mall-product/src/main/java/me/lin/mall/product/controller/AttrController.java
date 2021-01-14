@@ -6,11 +6,7 @@ import java.util.Map;
 import me.lin.mall.common.utils.PageUtils;
 import me.lin.mall.product.vo.AttrVo;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import me.lin.mall.product.entity.AttrEntity;
 import me.lin.mall.product.service.AttrService;
@@ -32,6 +28,18 @@ public class AttrController {
     @Autowired
     private AttrService attrService;
 
+    /**
+     * 分页查询
+     * @param params 规格参数查询条件
+     * @param catelogId 三级分类id
+     * @return R
+     */
+    @GetMapping("/base/list/{catelogId}")
+    public R baseAttrList(@RequestParam Map<String, Object> params
+            ,@PathVariable("catelogId") Long catelogId){
+        PageUtils page = attrService.queryBaseAttrPage(params,catelogId);
+        return R.ok().put("page", page);
+    }
     /**
      * 列表
      */
