@@ -17,6 +17,7 @@ import me.lin.mall.product.entity.AttrGroupEntity;
 import me.lin.mall.product.entity.CategoryEntity;
 import me.lin.mall.product.service.AttrService;
 import me.lin.mall.product.service.CategoryService;
+import me.lin.mall.product.vo.AttrGroupRelationVo;
 import me.lin.mall.product.vo.AttrRespVo;
 import me.lin.mall.product.vo.AttrVo;
 import org.apache.commons.lang3.StringUtils;
@@ -25,6 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -190,6 +192,41 @@ public class AttrServiceImpl extends ServiceImpl<AttrDao, AttrEntity> implements
             }
         }
 
+    }
+
+    /**
+     * 根据分组id，找到关联的所有基本属性
+     * @param attrGroupId 分组id
+     * @return List 分组关联属性
+     */
+    @Override
+    public List<AttrEntity> getRelationAttr(Long attrGroupId) {
+        List<AttrAttrgroupRelationEntity> entities = relationDao.selectList(new QueryWrapper<AttrAttrgroupRelationEntity>().eq("attr_group_id", attrGroupId));
+        List<Long> attrIds = entities.stream().map((attr) -> {
+            return attr.getAttrId();
+        }).collect(Collectors.toList());
+        if(attrIds != null) {
+            List<AttrEntity> attrEntities = this.listByIds(attrIds);
+            return attrEntities;
+        }else {
+            return null;
+        }
+
+    }
+
+    /**
+     * 通过属性id、分组id，删除对应的属性
+     *
+     * @param vos 商品id、属性id集合
+     */
+    @Override
+    public void deleteRelation(AttrGroupRelationVo[] vos) {
+        List<AttrAttrgroupRelationEntity> entities = Arrays.asList(vos).stream().map((item) -> {
+            AttrAttrgroupRelationEntity relationEntity = new AttrAttrgroupRelationEntity();
+            BeanUtils.copyProperties(item, relationEntity);
+            return relationEntity;
+        }).collect(Collectors.toList());
+        relationDao.deleteBatchRelation(entities);
     }
 
 }

@@ -2,13 +2,17 @@ package me.lin.mall.product.controller;
 
 import me.lin.mall.common.utils.PageUtils;
 import me.lin.mall.common.utils.R;
+import me.lin.mall.product.entity.AttrEntity;
 import me.lin.mall.product.entity.AttrGroupEntity;
 import me.lin.mall.product.service.AttrGroupService;
+import me.lin.mall.product.service.AttrService;
 import me.lin.mall.product.service.CategoryService;
+import me.lin.mall.product.vo.AttrGroupRelationVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 
@@ -22,13 +26,37 @@ import java.util.Map;
 @RestController
 @RequestMapping("product/attrgroup")
 public class AttrGroupController {
-    private final AttrGroupService attrGroupService;
+    @Autowired
+    AttrGroupService attrGroupService;
 
-    private final CategoryService categoryService;
+    @Autowired
+    CategoryService categoryService;
 
-    public AttrGroupController(AttrGroupService attrGroupService, CategoryService categoryService) {
-        this.attrGroupService = attrGroupService;
-        this.categoryService = categoryService;
+    @Autowired
+    AttrService attrService;
+
+
+    /**
+     * 删除属性和分类关联
+     * @param vos 属性id、分类id
+     * @return 删除成功信息
+     */
+    @PostMapping("/attr/relation/delete")
+    public R deleteRelation(@RequestBody AttrGroupRelationVo[] vos){
+        attrService.deleteRelation(vos);
+        return R.ok();
+
+    }
+
+    /**
+     * 通过分组id查询属性信息
+     * @param attrGroupId 分组id
+     * @return 属性信息
+     */
+    @GetMapping("/{attrgroupId}/attr/relation")
+    public R attrRelation(@PathVariable("attrgroupId") Long attrGroupId) {
+        List<AttrEntity> entities = attrService.getRelationAttr(attrGroupId);
+        return R.ok().put("data", entities);
     }
 
     /**

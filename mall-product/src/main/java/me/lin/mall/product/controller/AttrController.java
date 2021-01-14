@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.Map;
 
 import me.lin.mall.common.utils.PageUtils;
+import me.lin.mall.product.vo.AttrGroupRelationVo;
 import me.lin.mall.product.vo.AttrRespVo;
 import me.lin.mall.product.vo.AttrVo;
 import org.springframework.beans.factory.annotation.Autowired;
