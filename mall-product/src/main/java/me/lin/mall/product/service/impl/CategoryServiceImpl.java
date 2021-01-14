@@ -16,6 +16,7 @@ import me.lin.mall.common.utils.Query;
 import me.lin.mall.product.dao.CategoryDao;
 import me.lin.mall.product.entity.CategoryEntity;
 import me.lin.mall.product.service.CategoryService;
+import org.springframework.transaction.annotation.Transactional;
 
 
 @Service("categoryService")
@@ -77,6 +78,7 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
      *
      * @param category 分类名
      */
+    @Transactional
     @Override
     public void updateCascade(CategoryEntity category) {
         this.updateById(category);
