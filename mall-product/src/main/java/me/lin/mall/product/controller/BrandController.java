@@ -54,20 +54,6 @@ public class BrandController {
      */
     @RequestMapping("/save")
     public R save(@Validated({AddGroup.class}) @RequestBody BrandEntity brand){
-        /*if(result.hasErrors()){
-            HashMap<String, String> map = new HashMap<>();
-            // 1.获取校验的错误结果
-            result.getFieldErrors().forEach((item)->{
-                // FieldError 获取到错误提示
-                String defaultMessage = item.getDefaultMessage();
-                // 获取错误的属性的名字
-                String field = item.getField();
-                map.put(field,defaultMessage);
-            });
-            return R.error(400, "提交的数据不合法").put("data",map);
-        }else {
-            brandService.save(brand);
-        }*/
         brandService.save(brand);
         return R.ok();
     }
@@ -77,7 +63,7 @@ public class BrandController {
      */
     @RequestMapping("/update")
     public R update(@Validated({UpdateGroup.class}) @RequestBody BrandEntity brand){
-		brandService.updateById(brand);
+		brandService.updateDetail(brand);
 
         return R.ok();
     }

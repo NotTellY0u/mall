@@ -22,17 +22,20 @@ import java.util.Map;
 @RestController
 @RequestMapping("product/attrgroup")
 public class AttrGroupController {
-    @Autowired
-    private AttrGroupService attrGroupService;
+    private final AttrGroupService attrGroupService;
 
-    @Autowired
-    private CategoryService categoryService;
+    private final CategoryService categoryService;
+
+    public AttrGroupController(AttrGroupService attrGroupService, CategoryService categoryService) {
+        this.attrGroupService = attrGroupService;
+        this.categoryService = categoryService;
+    }
+
     /**
      * 列表
      */
     @RequestMapping("/list/{catelogId}")
     public R list(@RequestParam Map<String, Object> params, @PathVariable("catelogId") Long catelogId) {
-        // PageUtils page = attrGroupService.queryPage(params);
         PageUtils page = attrGroupService.queryPage(params, catelogId);
         return R.ok().put("page", page);
     }

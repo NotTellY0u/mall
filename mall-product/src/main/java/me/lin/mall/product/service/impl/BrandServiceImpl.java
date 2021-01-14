@@ -1,6 +1,8 @@
 package me.lin.mall.product.service.impl;
 
+import me.lin.mall.product.service.CategoryBrandRelationService;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
@@ -16,8 +18,14 @@ import me.lin.mall.product.entity.BrandEntity;
 import me.lin.mall.product.service.BrandService;
 
 
+/**
+ * @author Fibonacci
+ */
 @Service("brandService")
 public class BrandServiceImpl extends ServiceImpl<BrandDao, BrandEntity> implements BrandService {
+
+    @Autowired
+    CategoryBrandRelationService categoryBrandRelationService;
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
@@ -34,6 +42,18 @@ public class BrandServiceImpl extends ServiceImpl<BrandDao, BrandEntity> impleme
         );
 
         return new PageUtils(page);
+    }
+
+    @Override
+    public void updateDetail(BrandEntity brand) {
+        // 保证冗余字段的数据一致
+        this.updateById(brand);
+        if(StringUtils.isNotEmpty(brand.getName())){
+            // 同步更新其他关联表里的数据
+            categoryBrandRelationService.updateBrand(brand.getBrandId(),brand.getName());
+
+            //TODO 更新其他关联信息
+        }
     }
 
 }
