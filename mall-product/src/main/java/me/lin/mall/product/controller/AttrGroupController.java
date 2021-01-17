@@ -4,6 +4,7 @@ import me.lin.mall.common.utils.PageUtils;
 import me.lin.mall.common.utils.R;
 import me.lin.mall.product.entity.AttrEntity;
 import me.lin.mall.product.entity.AttrGroupEntity;
+import me.lin.mall.product.service.AttrAttrgroupRelationService;
 import me.lin.mall.product.service.AttrGroupService;
 import me.lin.mall.product.service.AttrService;
 import me.lin.mall.product.service.CategoryService;
@@ -35,6 +36,19 @@ public class AttrGroupController {
     @Autowired
     AttrService attrService;
 
+    @Autowired
+    AttrAttrgroupRelationService relationService;
+    
+    /**
+     * 新增分组与属性关联
+     * @param vos 新增的数据
+     * @return R 关联结果
+     */
+    @PostMapping("/attr/relation")
+    public R addRelation(@RequestBody List<AttrGroupRelationVo> vos){
+        relationService.saveBatch(vos);
+        return R.ok();
+    }
 
     /**
      * 删除属性和分类关联

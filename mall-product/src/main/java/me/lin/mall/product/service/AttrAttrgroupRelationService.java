@@ -3,7 +3,9 @@ package me.lin.mall.product.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import me.lin.mall.common.utils.PageUtils;
 import me.lin.mall.product.entity.AttrAttrgroupRelationEntity;
+import me.lin.mall.product.vo.AttrGroupRelationVo;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -16,5 +18,11 @@ import java.util.Map;
 public interface AttrAttrgroupRelationService extends IService<AttrAttrgroupRelationEntity> {
 
     PageUtils queryPage(Map<String, Object> params);
+
+    /**
+     * 新增分组与属性关联
+     * @param vos 要添加的数据
+     */
+    void saveBatch(List<AttrGroupRelationVo> vos);
 }
 

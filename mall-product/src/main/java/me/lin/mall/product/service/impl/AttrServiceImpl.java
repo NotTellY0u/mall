@@ -70,7 +70,7 @@ public class AttrServiceImpl extends ServiceImpl<AttrDao, AttrEntity> implements
         //1.保存基本数据
         this.save(attrEntity);
         //2.保存关联关系
-        if (attr.getAttrType() == ProductConstant.AttrEnum.ATTR_TYPE_BASE.getCode()) {
+        if (attr.getAttrType() == ProductConstant.AttrEnum.ATTR_TYPE_BASE.getCode() && attr.getAttrGroupId() != null) {
             AttrAttrgroupRelationEntity relationEntity = new AttrAttrgroupRelationEntity();
             relationEntity.setAttrGroupId(attr.getAttrGroupId());
             relationEntity.setAttrId(attrEntity.getAttrId());
@@ -247,7 +247,7 @@ public class AttrServiceImpl extends ServiceImpl<AttrDao, AttrEntity> implements
         // 2.当前分组只能关联其他分组没有引用的属性
         // 2.1) 找到当前分类下的其他分组
         List<AttrGroupEntity> attrGroupEntities = attrGroupDao.selectList(new QueryWrapper<AttrGroupEntity>()
-                .eq("catelog_id", catelogId).ne("attr_group_id", attrGroupId));
+                .eq("catelog_id", catelogId));
         List<Long> collect = attrGroupEntities.stream().map(AttrGroupEntity::getAttrGroupId).collect(Collectors.toList());
         log.error("collect" + Arrays.toString(collect.toArray()));
         // 2.2)这些分组关联到的属性
