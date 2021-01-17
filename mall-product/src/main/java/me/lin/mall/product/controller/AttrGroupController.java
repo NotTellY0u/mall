@@ -71,7 +71,7 @@ public class AttrGroupController {
     public R attrNotRelation(@PathVariable("attrgroupid") Long attrGroupId,
                              @RequestParam Map<String, Object> params) {
         PageUtils pageUtils = attrService.getNotRelationAttr(params,attrGroupId);
-        return R.ok().put("page", pageUtils);
+        return R.ok().put("data", pageUtils);
 
     }
 
