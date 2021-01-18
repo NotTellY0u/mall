@@ -3,10 +3,14 @@ package me.lin.mall.product.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import me.lin.mall.common.to.SkuReductionTo;
+import me.lin.mall.common.to.SpuBoundsTo;
 import me.lin.mall.common.utils.PageUtils;
 import me.lin.mall.common.utils.Query;
+import me.lin.mall.common.utils.R;
 import me.lin.mall.product.dao.SpuInfoDao;
 import me.lin.mall.product.entity.*;
+import me.lin.mall.product.feign.CouponFeignService;
 import me.lin.mall.product.service.*;
 import me.lin.mall.product.vo.*;
 import org.springframework.beans.BeanUtils;
@@ -43,6 +47,9 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
 
     @Autowired
     SkuSaleAttrValueService skuSaleAttrValueService;
+
+    @Autowired
+    CouponFeignService couponFeignService;
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
@@ -91,7 +98,11 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
         }).collect(Collectors.toList());
         productAttrValueService.saveProductAttr(collect);
         // 5.保存spu的积分信息：mall_sms -> sms_spu_bounds
-
+        Bounds bounds = vo.getBounds();
+        SpuBoundsTo spuBoundsTo = new SpuBoundsTo();
+        BeanUtils.copyProperties(bounds,spuBoundsTo);
+        spuBoundsTo.setSpuId(spuInfoEntity.getId());
+        R r = couponFeignService.saveSpuBounds(spuBoundsTo);
         // 5.保存当前spu对应的所有sku信息
 
         List<Skus> skus = vo.getSkus();
@@ -137,6 +148,10 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
                 //5.3). sku的销售属性信息：pms_sku_sale_attr_value
                 skuSaleAttrValueService.saveBatch(skuSaleAttrValueEntities);
                 //5.4)、sku的优惠、满减等信息：mall_sms -> sms_ladder\sms_sku_full_reduction\sms_member_price
+                SkuReductionTo skuReductionTo = new SkuReductionTo();
+                BeanUtils.copyProperties(item,skuReductionTo);
+                skuReductionTo.setSkuId(skuId);
+                couponFeignService.saveSkuReduction(skuReductionTo);
             });
         }
     }
