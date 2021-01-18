@@ -9,6 +9,7 @@ import me.lin.mall.product.service.AttrGroupService;
 import me.lin.mall.product.service.AttrService;
 import me.lin.mall.product.service.CategoryService;
 import me.lin.mall.product.vo.AttrGroupRelationVo;
+import me.lin.mall.product.vo.AttrGroupWithAttrsVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -48,6 +49,19 @@ public class AttrGroupController {
     public R addRelation(@RequestBody List<AttrGroupRelationVo> vos){
         relationService.saveBatch(vos);
         return R.ok();
+    }
+
+    /**
+     * 获取分类下所有分组及关联属性
+     * @param catelogId 分类id
+     * @return 分组及关联属性
+     */
+    @GetMapping("/{catelogId}/withattr")
+    public R getAttrGroupWithAttrs(@PathVariable("catelogId") Long catelogId){
+        // 1.查出当前分类下的所有属性分组
+        List<AttrGroupWithAttrsVo> vos = attrGroupService.getAttrGroupWithAttrsByCatelogId(catelogId);
+        // 2.查出所有属性分组的所有属性
+        return R.ok().put("data", vos);
     }
 
     /**
