@@ -22,5 +22,12 @@ public interface SkuInfoService extends IService<SkuInfoEntity> {
      * @param skuInfoEntity sku实体类
      */
     void saveSkuInfo(SkuInfoEntity skuInfoEntity);
+
+    /**
+     * 条件分页查询
+     * @param params  分页条件
+     * @return 查询结果
+     */
+    PageUtils queryPageByCondition(Map<String, Object> params);
 }
 
