@@ -5,6 +5,7 @@ import me.lin.mall.common.utils.PageUtils;
 import me.lin.mall.ware.entity.PurchaseEntity;
 import me.lin.mall.ware.vo.MergeVo;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -30,5 +31,11 @@ public interface PurchaseService extends IService<PurchaseEntity> {
      * @param mergeVo 需要合并的采购单
      */
     void mergePurchase(MergeVo mergeVo);
+
+    /**
+     * 领取采购单
+     * @param ids 采购单
+     */
+    void received(List<Long> ids);
 }
 

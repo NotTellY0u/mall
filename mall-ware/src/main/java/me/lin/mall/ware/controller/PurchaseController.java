@@ -2,6 +2,7 @@ package me.lin.mall.ware.controller;
 
 import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 import me.lin.mall.ware.vo.MergeVo;
@@ -73,6 +74,19 @@ public class PurchaseController {
         purchase.setUpdateTime(new Date());
         purchase.setCreateTime(new Date());
 		purchaseService.save(purchase);
+
+        return R.ok();
+    }
+
+    /**
+     * 领取采购单
+     * @param ids 采购单
+     * @return 领取结果
+     */
+    @PostMapping("/received")
+    public R received(@RequestBody List<Long> ids){
+
+        purchaseService.received(ids);
 
         return R.ok();
     }
