@@ -1,5 +1,7 @@
 package me.lin.mall.ware.service.impl;
 
+import me.lin.mall.common.utils.R;
+import me.lin.mall.ware.feign.ProductFeignService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,6 +24,9 @@ public class WareSkuServiceImpl extends ServiceImpl<WareSkuDao, WareSkuEntity> i
 
     @Autowired
     WareSkuDao wareSkuDao;
+
+    @Autowired
+    ProductFeignService productFeignService;
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
@@ -51,7 +56,17 @@ public class WareSkuServiceImpl extends ServiceImpl<WareSkuDao, WareSkuEntity> i
             wareSkuEntity.setWareId(wareId);
             wareSkuEntity.setStock(skuNum);
             wareSkuEntity.setStockLocked(0);
-            //远程查询sku名字
+            //远程查询sku名字,如果失败无需回滚
+            try{
+                R info = productFeignService.info(skuId);
+                Map<String,Object> data = (Map<String, Object>) info.get("skuInfo");
+                if(info.getCode() == 0){
+                    wareSkuEntity.setSkuName((String) data.get("skuName"));
+                }
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+
 
             wareSkuDao.insert(wareSkuEntity);
         }else {
