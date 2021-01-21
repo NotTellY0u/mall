@@ -1,5 +1,5 @@
 # mall
-### 待办事项
+### OSS配置
 
 nacos中新增thirdParty命名空间，在mall-third-party中的bootstrap.properties文件中配置
 在mall-product中配置oss，如下：
