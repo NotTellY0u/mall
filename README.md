@@ -35,7 +35,6 @@ echo "http.host: 0.0.0.0" >> /mydocker/mall/elasticsearch/config/elasticsearch.y
 chmod -R 777 /mydocker/mall/elasticsearch/
 
 ```
-java
 docker run -d --name es -p 9200:9200 -p 9300:9300 -e ES_JAVA_OPTS="-Xms512m -Xmx512m" -v /mydocker/mall/elasticsearch/plugins:/usr/share/elasticsearch/plugins -v /mydocker/mall/elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml -v /mydocker/mall/elasticsearch/data:/usr/share/elasticsearch/data -e "discovery.type=single-node" elasticsearch:7.4.2
 ```
 
@@ -44,7 +43,6 @@ docker run -d --name es -p 9200:9200 -p 9300:9300 -e ES_JAVA_OPTS="-Xms512m -Xmx
 测试文档[开启科学上网]：https://raw.githubusercontent.com/elastic/elasticsearch/master/docs/src/test/resources/accounts.json
 
 ```
-java
 GET /custome/external
 #批量插入
 POST /custome/external/_bulk
@@ -440,7 +438,6 @@ docker container cp 容器名:/etc/nginx .
 ### 项目PUT索引:
 
 ```
-java
 # nested : 嵌入式数据类型
 
 PUT product
@@ -515,7 +512,6 @@ PUT product
 创建这两个
 
 ```
-java
 MaxUserPort 			十进制值：65534
 TCPTimedWaitDelay		 十进制值：30
 ```
@@ -531,7 +527,6 @@ TCPTimedWaitDelay		 十进制值：30
 ### ES嵌入式查询
 
 ```
-java
 # 嵌入查询
 GET product/_search
 {
@@ -571,7 +566,6 @@ GET product/_search
 ### ES复合查询
 
 ```
-java
 # 指定catalogId 、brandId、attrs.attrId、嵌入式查询、倒序、0-6000、每页显示两个、高亮skuTitle、聚合分析
 GET product/_search
 {
@@ -728,7 +722,6 @@ GET product/_search
 ### ES数据迁移
 
 ```
-java
 POST _reindex
 {
   "source": {
@@ -743,7 +736,6 @@ POST _reindex
 ### 聚合、子聚合
 
 ```
-java
 # 聚合、子聚合、聚合 嵌入式的属性：所有的操作都应该用嵌入式的
 GET product/_search
 {
@@ -820,7 +812,6 @@ GET product/_search
 ### 联合查询
 
 ```
-java
 SELECT pav.`spu_id`, ag.`attr_group_name`, ag.`attr_group_id`, aar.`attr_id`, attr.`attr_name` ,pav.`attr_value`
         FROM `pms_attr_group` ag
         LEFT JOIN `pms_attr_attrgroup_relation` aar ON aar.`attr_group_id` = ag.`attr_group_id`
@@ -830,7 +821,6 @@ SELECT pav.`spu_id`, ag.`attr_group_name`, ag.`attr_group_id`, aar.`attr_id`, at
 ```
 
 ```
-java
 SELECT ssav.`attr_id` attr_id,ssav.`attr_name` attr_name,GROUP_CONCAT(DISTINCT ssav.`attr_value`) attr_values FROM `pms_sku_info` INFO LEFT JOIN `pms_sku_sale_attr_value` ssav ON ssav.`sku_id` = info.`sku_id` WHERE info.`spu_id` = 3 GROUP BY ssav.`attr_id`, ssav.`attr_name`;
 ```
 
@@ -853,21 +843,18 @@ docker run -d --name rabbitmq -p 5671:5671 -p 5672:5672 -p 4369:4369 -p 25672:25
 ### Feign远程调用丢失请求头问题
 
 ```
-java
 浏览器发送请求自动带了Cookie Feign远程调用会创建一个新的请求头 Cart服务发现这个请求没有请求头[Session] Feign会执行所有的拦截器 .. 就会认为没有登录 最终导致访问失败
 ```
 
 Lua脚本：
 
 ```
-java
 if redis.call('get',KEYS[1]) == ARGV[1] then return redis.call('del',KEYS[1]) else return 0 end
 ```
 
 Seata表
 
 ```
-java
 CREATE TABLE `undo_log` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `branch_id` bigint(20) NOT NULL,
@@ -898,7 +885,6 @@ CREATE TABLE `mq_message`(`message_id` CHAR(32) NOT NULL, `content` TEXT COMMENT
 ### zipKin安装
 
 ```
-java
 docker run -d -p 9411:9411 openzipkin/zipkin
 ```
 
