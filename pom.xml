@@ -10,6 +10,7 @@
 	<packaging>pom</packaging>
 
 	<modules>
+		<module>mall-search</module>
 		<module>mall-member</module>
 		<module>mall-product</module>
 		<module>mall-ware</module>
