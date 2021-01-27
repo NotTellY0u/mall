@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import me.lin.mall.common.to.SkuReductionTo;
 import me.lin.mall.common.to.SpuBoundsTo;
+import me.lin.mall.common.to.es.SkuEsModel;
 import me.lin.mall.common.utils.PageUtils;
 import me.lin.mall.common.utils.Query;
 import me.lin.mall.common.utils.R;
@@ -20,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -52,6 +54,12 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
 
     @Autowired
     CouponFeignService couponFeignService;
+
+    @Autowired
+    BrandService brandService;
+
+    @Autowired
+    CategoryService categoryService;
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
@@ -201,11 +209,11 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
             wrapper.eq("publish_status", status);
         }
         String brandId = (String) params.get("brandId");
-        if (StringUtils.isNotBlank(brandId)&& !"0".equalsIgnoreCase("brandId")) {
+        if (StringUtils.isNotBlank(brandId)&& !"0".equalsIgnoreCase(brandId)) {
             wrapper.eq("brand_id", brandId);
         }
         String catelogId = (String) params.get("catelogId");
-        if (StringUtils.isNotBlank(catelogId) && !"0".equalsIgnoreCase("catelogId")) {
+        if (StringUtils.isNotBlank(catelogId) && !"0".equalsIgnoreCase(catelogId)) {
             wrapper.eq("catalog_id", catelogId);
         }
         IPage<SpuInfoEntity> page = this.page(
@@ -214,6 +222,29 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
                 );
 
         return new PageUtils(page);
+    }
+
+    /**
+     * 上架商品
+     * @param spuId spuId
+     */
+    @Override
+    public void up(Long spuId) {
+        // 1.查出当前spu对对应所有sku信息，品牌的名字
+        List<SkuInfoEntity> skuInfoEntities = skuInfoService.getSkuBySpuId(spuId);
+        // 2.封装每个sku的信息
+        List<SkuEsModel> upProducts = skuInfoEntities.stream().map(sku -> {
+            SkuEsModel esModel = new SkuEsModel();
+            BeanUtils.copyProperties(sku,esModel);
+            esModel.setSkuPrice(sku.getPrice());
+            esModel.setSkuImg(sku.getSkuDefaultImg());
+            BrandEntity brand = brandService.getById(esModel.getBrandId());
+            esModel.setBrandName(brand.getName());
+            esModel.setBrandImg(brand.getLogo());
+            CategoryEntity categoryEntity = categoryService.getById(esModel.getCatelogId());
+            esModel.setCatelogName(categoryEntity.getName());
+            return esModel;
+        }).collect(Collectors.toList());
     }
 
 
