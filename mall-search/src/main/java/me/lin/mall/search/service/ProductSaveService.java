@@ -2,6 +2,7 @@ package me.lin.mall.search.service;
 
 import me.lin.mall.common.to.es.SkuEsModel;
 
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -14,6 +15,7 @@ public interface ProductSaveService {
     /**
      * 保存上架状态
      * @param skuEsModels 需要保存状态的商品
+     * @return
      */
-    void productStatusUp(List<SkuEsModel> skuEsModels);
+    boolean productStatusUp(List<SkuEsModel> skuEsModels) throws IOException;
 }

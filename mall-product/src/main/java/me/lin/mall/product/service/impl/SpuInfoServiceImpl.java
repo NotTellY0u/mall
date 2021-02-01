@@ -3,6 +3,7 @@ package me.lin.mall.product.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import me.lin.mall.common.constant.ProductConstant;
 import me.lin.mall.common.to.SkuReductionTo;
 import me.lin.mall.common.to.SpuBoundsTo;
 import me.lin.mall.common.to.es.SkuEsModel;
@@ -12,12 +13,12 @@ import me.lin.mall.common.utils.R;
 import me.lin.mall.product.dao.SpuInfoDao;
 import me.lin.mall.product.entity.*;
 import me.lin.mall.product.feign.CouponFeignService;
+import me.lin.mall.product.feign.SearchFeignService;
 import me.lin.mall.product.feign.WareFeignService;
 import me.lin.mall.product.service.*;
 import me.lin.mall.product.vo.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,47 +27,68 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 
+/**
+ * @author Fibonacci
+ */
 @Service("spuInfoService")
 public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> implements SpuInfoService {
 
-    @Autowired
+    final
     SpuInfoDescService spuInfoDescService;
 
-    @Autowired
+    final
     SpuImagesService spuImagesService;
 
-    @Autowired
+    final
     AttrService attrService;
 
-    @Autowired
+    final
     ProductAttrValueService productAttrValueService;
 
-    @Autowired
+    final
     SkuInfoService skuInfoService;
 
-    @Autowired
+    final
     SkuImagesService skuImagesService;
 
-    @Autowired
+    final
     SkuSaleAttrValueService skuSaleAttrValueService;
 
-    @Autowired
+    final
     CouponFeignService couponFeignService;
 
-    @Autowired
+    final
     BrandService brandService;
 
-    @Autowired
+    final
     CategoryService categoryService;
 
-    @Autowired
+    final
     WareFeignService wareFeignService;
+
+    final
+    SearchFeignService searchFeignService;
+
+    public SpuInfoServiceImpl(SpuInfoDescService spuInfoDescService, SpuImagesService spuImagesService, AttrService attrService, ProductAttrValueService productAttrValueService, SkuInfoService skuInfoService, SkuImagesService skuImagesService, SkuSaleAttrValueService skuSaleAttrValueService, CouponFeignService couponFeignService, BrandService brandService, CategoryService categoryService, WareFeignService wareFeignService, SearchFeignService searchFeignService) {
+        this.spuInfoDescService = spuInfoDescService;
+        this.spuImagesService = spuImagesService;
+        this.attrService = attrService;
+        this.productAttrValueService = productAttrValueService;
+        this.skuInfoService = skuInfoService;
+        this.skuImagesService = skuImagesService;
+        this.skuSaleAttrValueService = skuSaleAttrValueService;
+        this.couponFeignService = couponFeignService;
+        this.brandService = brandService;
+        this.categoryService = categoryService;
+        this.wareFeignService = wareFeignService;
+        this.searchFeignService = searchFeignService;
+    }
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
         IPage<SpuInfoEntity> page = this.page(
                 new Query<SpuInfoEntity>().getPage(params),
-                new QueryWrapper<SpuInfoEntity>()
+                new QueryWrapper<>()
         );
 
         return new PageUtils(page);
@@ -168,7 +190,7 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
                 SkuReductionTo skuReductionTo = new SkuReductionTo();
                 BeanUtils.copyProperties(item, skuReductionTo);
                 skuReductionTo.setSkuId(skuId);
-                if (skuReductionTo.getFullCount() > 0 || skuReductionTo.getFullPrice().compareTo(new BigDecimal("0")) == 1) {
+                if (skuReductionTo.getFullCount() > 0 || skuReductionTo.getFullPrice().compareTo(new BigDecimal("0")) > 0) {
                     R r1 = couponFeignService.saveSkuReduction(skuReductionTo);
                     if (r1.getCode() != 0) {
                         log.error("远程保存spu优惠信息失败");
@@ -193,7 +215,7 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
      * 条件查询
      *
      * @param params 查询条件
-     * @return
+     * @return 分页查询结果
      */
     @Override
     public PageUtils queryPageByCondition(Map<String, Object> params) {
@@ -201,9 +223,7 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
 
         String key = (String) params.get("key");
         if (StringUtils.isNotBlank(key)) {
-            wrapper.and(w -> {
-                w.eq("id", key).or().like("spu_name", key);
-            });
+            wrapper.and(w -> w.eq("id", key).or().like("spu_name", key));
         }
         String status = (String) params.get("status");
         if (StringUtils.isNotBlank(status)) {
@@ -236,9 +256,7 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
         List<SkuInfoEntity> skuInfoEntities = skuInfoService.getSkuBySpuId(spuId);
         List<Long> collect = skuInfoEntities.stream().map(SkuInfoEntity::getSkuId).collect(Collectors.toList());
         List<ProductAttrValueEntity> baseAttrs = productAttrValueService.baseAttrListForSpu(spuId);
-        List<Long> attrIds = baseAttrs.stream().map(attr -> {
-            return attr.getAttrId();
-        }).collect(Collectors.toList());
+        List<Long> attrIds = baseAttrs.stream().map(ProductAttrValueEntity::getAttrId).collect(Collectors.toList());
 
         List<Long> searchAttrIds = attrService.selectSearchAttrs(attrIds);
 
@@ -287,6 +305,16 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
             esModel.setAttrs(attrsList);
             return esModel;
         }).collect(Collectors.toList());
+        
+        // 将数据发给s进行保存
+        R r = searchFeignService.productStatusUp(upProducts);
+        if(r.getCode() == 0){
+            // 远程调用成功 修改当前spu状态
+            baseMapper.updateSpuStatus(spuId, ProductConstant.StatusEnum.SPU_UP.getCode());
+        }else {
+            
+        }
+
     }
 
 
