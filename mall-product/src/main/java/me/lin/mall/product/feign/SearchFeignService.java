@@ -13,10 +13,10 @@ import java.util.List;
  * @create: 2021-02-01 10:09
  * @Version 1.0
  */
-@FeignClient("/mall-search")
+@FeignClient("mall-search")
 public interface SearchFeignService {
 
-    @PostMapping("/product")
+    @PostMapping("/search/save/product")
     R productStatusUp(@RequestBody List<SkuEsModel> skuEsModels);
 
 }
