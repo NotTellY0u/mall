@@ -1,5 +1,6 @@
 package me.lin.mall.ware.service.impl;
 
+import lombok.extern.slf4j.Slf4j;
 import me.lin.mall.common.utils.R;
 import me.lin.mall.ware.feign.ProductFeignService;
 import me.lin.mall.ware.vo.SkuHasStockVo;
@@ -21,7 +22,7 @@ import me.lin.mall.ware.dao.WareSkuDao;
 import me.lin.mall.ware.entity.WareSkuEntity;
 import me.lin.mall.ware.service.WareSkuService;
 
-
+@Slf4j
 @Service("wareSkuService")
 public class WareSkuServiceImpl extends ServiceImpl<WareSkuDao, WareSkuEntity> implements WareSkuService {
 
@@ -89,6 +90,8 @@ public class WareSkuServiceImpl extends ServiceImpl<WareSkuDao, WareSkuEntity> i
             Long count = baseMapper.getSkuStock(skuId);
             vo.setSkuId(skuId);
             vo.setHasStock(count != null && count > 0);
+            log.info("HasStock的值"+vo.getHasStock());
+            log.info("SkuId的值"+vo.getSkuId());
             return vo;
         }).collect(Collectors.toList());
         return collect;

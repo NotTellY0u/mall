@@ -1,5 +1,6 @@
 package me.lin.mall.product.service.impl;
 
+import com.alibaba.fastjson.TypeReference;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -258,7 +259,7 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
         List<Long> collect = skuInfoEntities.stream().map(SkuInfoEntity::getSkuId).collect(Collectors.toList());
         List<ProductAttrValueEntity> baseAttrs = productAttrValueService.baseAttrListForSpu(spuId);
         List<Long> attrIds = baseAttrs.stream().map(ProductAttrValueEntity::getAttrId).collect(Collectors.toList());
-
+        //  检索属性
         List<Long> searchAttrIds = attrService.selectSearchAttrs(attrIds);
 
         Set<Long> idSet = new HashSet<>(searchAttrIds);
@@ -274,8 +275,12 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
         //发送远程调用，库存系统查询是否有库存
         Map<Long, Boolean> map = null;
         try {
-            R<List<SkuHasStockVo>> skusHasStock = wareFeignService.getSkusHasStock(collect);
-            map = skusHasStock.getData().stream().collect(Collectors.toMap(SkuHasStockVo::getSkuId, SkuHasStockVo::getHasStock));
+            R r = wareFeignService.getSkusHasStock(collect);
+
+            TypeReference<List<SkuHasStockVo>> typeReference = new TypeReference<List<SkuHasStockVo>>() {
+            };
+
+            map = r.getData(typeReference).stream().collect(Collectors.toMap(SkuHasStockVo::getSkuId, SkuHasStockVo::getHasStock));
         } catch (Exception e) {
             log.error("库存服务查询异常:原因:", e);
         }

@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import lombok.extern.slf4j.Slf4j;
 import me.lin.mall.ware.vo.SkuHasStockVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -22,6 +23,7 @@ import me.lin.mall.common.utils.R;
  * @email bugaosuni@gmail.com
  * @date 2020-12-11 22:59:58
  */
+@Slf4j
 @RestController
 @RequestMapping("ware/waresku")
 public class WareSkuController {
@@ -32,13 +34,9 @@ public class WareSkuController {
      * 查询sku是否有库存
      */
     @PostMapping("/hasstock")
-    public R<List<SkuHasStockVo>> getSkusHasStock(@RequestBody List<Long> skuIds){
+    public R getSkusHasStock(@RequestBody List<Long> skuIds){
         List<SkuHasStockVo> vos = wareSkuService.getSkusHasStock(skuIds);
-        R<List<SkuHasStockVo>> ok = R.ok();
-        ok.setData(vos);
-
-        return ok;
-
+        return R.ok().setData(vos);
     }
 
     /**
