@@ -78,11 +78,20 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
      *
      * @param category 分类名
      */
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public void updateCascade(CategoryEntity category) {
         this.updateById(category);
         categoryBrandRelationService.updateCategory(category.getCatId(),category.getName());
+    }
+
+    /**
+     * 获取一级分类
+     * @return 一级分类列表
+     */
+    @Override
+    public List<CategoryEntity> getLevelOneCategorys() {
+        return baseMapper.selectList(new QueryWrapper<CategoryEntity>().eq("parent_cid", "0"));
     }
 
     private List<Long> findParentPath(Long catelogId, List<Long> path) {
