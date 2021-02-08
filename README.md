@@ -34,9 +34,19 @@ echo "http.host: 0.0.0.0" >> /mydocker/mall/elasticsearch/config/elasticsearch.y
 
 chmod -R 777 /mydocker/mall/elasticsearch/
 
+win
+```
+docker run --name es -p 9200:9200 -p 9300:9300 -e "discovery.type=single-node" -e ES_JAVA_OPTS="-Xms64m -Xmx512m" -v /D:/ElasticSearch/config:/usr/share/elasticsearch/config -v /D:/elasticsearch/data:/usr/share/elasticsearch/data -v /D:/ElasticSearch/plugins:/usr/share/elaticsearch/plugins -d elasticsearch:7.4.2
+```
+
+linux
 ```
 docker run -d --name es -p 9200:9200 -p 9300:9300 -e ES_JAVA_OPTS="-Xms512m -Xmx512m" -v /mydocker/mall/elasticsearch/plugins:/usr/share/elasticsearch/plugins -v /mydocker/mall/elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml -v /mydocker/mall/elasticsearch/data:/usr/share/elasticsearch/data -e "discovery.type=single-node" elasticsearch:7.4.2
 ```
+
+### kibana的安装
+docker run --name kibana -p 5601:5601 -d kibana:7.4.2
+
 
 ### elasticsearch查询
 
@@ -430,7 +440,11 @@ POST _analyze
 将容器里面的某个文件夹复制到当前文件夹
 
 ```
+docker pull nginx:1.10
+
 docker container cp 容器名:/etc/nginx .
+
+docker run -p 80:80 --name nginx -v /D/ElasticSearch/nginx/html:/usr/share/nginx/html -v /D/ElasticSearch/nginx/logs:/var/log/nginx -v /D/ElasticSearch/nginx/conf:/etc/nginx -d nginx:1.10
 ```
 
 
