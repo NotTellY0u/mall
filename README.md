@@ -468,7 +468,32 @@ docker run -p 80:80 --name nginx -v /mydata/nginx/html:/usr/share/nginx/html -v 
 
 ```
 
+### nginx配置
 
+```
+
+cd nginx/conf
+
+vi nginx.conf
+
+添加：    
+    upstream mall{
+        server 10.211.55.2:88;
+    }
+
+cd conf.d
+
+cp default.conf mall.conf
+
+vi mall.conf
+
+修改:
+   location / {
+        proxy_pass http://mall;
+    }
+
+
+```
 
 ### 项目PUT索引:
 
