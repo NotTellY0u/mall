@@ -442,9 +442,30 @@ POST _analyze
 ```
 docker pull nginx:1.10
 
+docker run -p 80:80 --name nginx -d nginx:1.10
+
+cd /mydata
+
+mkdir nginx
+
 docker container cp 容器名:/etc/nginx .
 
+mv nginx conf
+
+mkdir nginx
+
+mv conf nginx
+
+docker stop nginx
+
+docker rm nginx
+
+win下
 docker run -p 80:80 --name nginx -v /D/ElasticSearch/nginx/html:/usr/share/nginx/html -v /D/ElasticSearch/nginx/logs:/var/log/nginx -v /D/ElasticSearch/nginx/conf:/etc/nginx -d nginx:1.10
+
+mac下
+docker run -p 80:80 --name nginx -v /mydata/nginx/html:/usr/share/nginx/html -v /mydata/nginx/logs:/var/log/nginx -v /mydata/nginx/conf:/etc/nginx -d nginx:1.10
+
 ```
 
 
