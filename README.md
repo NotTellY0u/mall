@@ -492,6 +492,12 @@ vi mall.conf
         proxy_pass http://mall;
     }
 
+静态资源位置修改：
+vi mall.conf
+    
+    location /static/ {
+    root  /usr/share/nginx/html;
+    }
 
 ```
 
