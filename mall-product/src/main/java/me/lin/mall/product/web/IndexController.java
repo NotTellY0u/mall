@@ -2,12 +2,15 @@ package me.lin.mall.product.web;
 
 import me.lin.mall.product.entity.CategoryEntity;
 import me.lin.mall.product.service.CategoryService;
-import org.springframework.beans.factory.annotation.Autowired;
+import me.lin.mall.product.vo.Catalog2Vo;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Author Fibonacci
@@ -30,4 +33,13 @@ public class IndexController {
         model.addAttribute("categorys",categoryEntityList);
         return "index";
     }
+
+    @ResponseBody
+    @RequestMapping("index/catalog.json")
+    public Map<String, List<Catalog2Vo>> getCatlogJson() {
+
+        Map<String, List<Catalog2Vo>> map = categoryService.getCatelogJson();
+        return map;
+    }
+
 }
