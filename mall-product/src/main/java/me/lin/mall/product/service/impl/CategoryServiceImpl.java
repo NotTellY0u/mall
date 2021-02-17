@@ -1,9 +1,13 @@
 package me.lin.mall.product.service.impl;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.TypeReference;
 import me.lin.mall.product.service.CategoryBrandRelationService;
 import me.lin.mall.product.vo.Catalog2Vo;
 import me.lin.mall.product.vo.Catalog3Vo;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -24,11 +28,20 @@ import org.springframework.transaction.annotation.Transactional;
 @Service("categoryService")
 public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity> implements CategoryService {
 
-    @Autowired
+    final
     CategoryDao categoryDao;
 
-    @Autowired
+    final
     CategoryBrandRelationService categoryBrandRelationService;
+
+    private final StringRedisTemplate redisTemplate;
+
+    public CategoryServiceImpl(CategoryDao categoryDao, CategoryBrandRelationService categoryBrandRelationService, StringRedisTemplate redisTemplate) {
+        this.categoryDao = categoryDao;
+        this.categoryBrandRelationService = categoryBrandRelationService;
+        this.redisTemplate = redisTemplate;
+    }
+
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
         IPage<CategoryEntity> page = this.page(
@@ -101,7 +114,28 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
      * @return 分类json数据
      */
     @Override
-    public Map<String, List<Catalog2Vo>> getCatelogJson() {
+    public Map<String, List<Catalog2Vo>> getCatalogJson() {
+        //给缓存中放json字符串，拿出的json字符串，还能逆转为能用的对象类型[序列化与反序列化]
+        // 1.加入缓存逻辑,缓存中存的是json字符串
+        String catelogJSON = redisTemplate.opsForValue().get("catelogJSON");
+        if (StringUtils.isEmpty(catelogJSON)) {
+            //2. 缓存中没有，查询数据库
+            Map<String, List<Catalog2Vo>> catalogJsonFromDb = getCatelogJsonFromDb();
+            //3. 查到的数据再放入缓存
+            String s = JSON.toJSONString(catalogJsonFromDb);
+            redisTemplate.opsForValue().set("catelogJSON",s);
+            return catalogJsonFromDb;
+        }
+        Map<String, List<Catalog2Vo>> result = JSON.parseObject(catelogJSON, new TypeReference<Map<String, List<Catalog2Vo>>>() {
+        });
+        return result;
+    }
+
+    /**
+     *  从数据库查询并封装json分类数据
+     * @return 分类json数据
+     */
+    public Map<String, List<Catalog2Vo>> getCatelogJsonFromDb() {
         List<CategoryEntity> entityList = baseMapper.selectList(null);
         // 查询所有一级分类
         List<CategoryEntity> level1 = getCategoryEntities(entityList, 0L);

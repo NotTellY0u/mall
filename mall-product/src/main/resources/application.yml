@@ -15,6 +15,12 @@ spring:
     cache: false
   application:
     name: mall-product
+  redis:
+#    win
+#    host:
+#    mac
+    host: 10.211.55.6
+    port: 6379
 
 mybatis-plus:
   mapper-locations: classpath*:/mapper/**/*.xml
