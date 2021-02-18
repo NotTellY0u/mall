@@ -500,6 +500,11 @@ vi mall.conf
     }
 
 ```
+### redis安装
+
+```
+docker run -p 6379:6379 --name redis -v /D/Elasticsearch/redis/data:/data -v /D/Elasticsearch/redis/conf/redis.conf:/etc/redis/redis.conf -d redis redis-server /etc/redis/redis.conf
+```
 
 ### 项目PUT索引:
 

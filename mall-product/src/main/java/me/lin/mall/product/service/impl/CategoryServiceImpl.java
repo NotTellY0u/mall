@@ -6,7 +6,6 @@ import me.lin.mall.product.service.CategoryBrandRelationService;
 import me.lin.mall.product.vo.Catalog2Vo;
 import me.lin.mall.product.vo.Catalog3Vo;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -46,7 +45,7 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
     public PageUtils queryPage(Map<String, Object> params) {
         IPage<CategoryEntity> page = this.page(
                 new Query<CategoryEntity>().getPage(params),
-                new QueryWrapper<CategoryEntity>()
+                new QueryWrapper<>()
         );
 
         return new PageUtils(page);
@@ -58,15 +57,9 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
         List<CategoryEntity> entities = baseMapper.selectList(null);
         //2.组装父子的树形结构
         //2.1).找到所有的一级分类
-        List<CategoryEntity> levelOneMenus = entities.stream().filter(categoryEntity ->
+        return entities.stream().filter(categoryEntity ->
                 categoryEntity.getParentCid() == 0
-        ).map((menu) -> {
-            menu.setChildren(getChildrens(menu, entities));
-            return menu;
-        }).sorted((menu1, menu2) -> {
-            return (menu1.getSort() == null ? 0 : menu1.getSort()) - (menu2.getSort() == null ? 0 : menu2.getSort());
-        }).collect(Collectors.toList());
-        return levelOneMenus;
+        ).peek((menu) -> menu.setChildren(getChildren(menu, entities))).sorted(Comparator.comparingInt(menu -> (menu.getSort() == null ? 0 : menu.getSort()))).collect(Collectors.toList());
     }
 
     @Override
@@ -116,6 +109,13 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
     @Override
     public Map<String, List<Catalog2Vo>> getCatalogJson() {
         //给缓存中放json字符串，拿出的json字符串，还能逆转为能用的对象类型[序列化与反序列化]
+
+        /**
+         * 1.空结果缓存：解决缓存穿透
+         * 2.设置过期时间（加随机值）：解决缓存雪崩问题
+         * 3.加锁：解锁缓存击穿问题
+         */
+
         // 1.加入缓存逻辑,缓存中存的是json字符串
         String catelogJSON = redisTemplate.opsForValue().get("catelogJSON");
         if (StringUtils.isEmpty(catelogJSON)) {
@@ -136,29 +136,33 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
      * @return 分类json数据
      */
     public Map<String, List<Catalog2Vo>> getCatelogJsonFromDb() {
-        List<CategoryEntity> entityList = baseMapper.selectList(null);
-        // 查询所有一级分类
-        List<CategoryEntity> level1 = getCategoryEntities(entityList, 0L);
-        Map<String, List<Catalog2Vo>> collect = level1.stream().collect(Collectors.toMap(k -> k.getCatId().toString(), v -> {
-            // 拿到每一个一级分类 然后查询他们的二级分类
-            List<CategoryEntity> entities = getCategoryEntities(entityList, v.getCatId());
-            List<Catalog2Vo> catalog2Vos = null;
-            if (entities != null) {
-                catalog2Vos = entities.stream().map(l2 -> {
-                    Catalog2Vo catalog2Vo = new Catalog2Vo(v.getCatId().toString(), l2.getName(), l2.getCatId().toString(), null);
-                    // 找当前二级分类的三级分类
-                    List<CategoryEntity> level3 = getCategoryEntities(entityList, l2.getCatId());
-                    // 三级分类有数据的情况下
-                    if (level3 != null) {
-                        List<Catalog3Vo> catalog3Vos = level3.stream().map(l3 -> new Catalog3Vo(l3.getCatId().toString(), l3.getName(), l2.getCatId().toString())).collect(Collectors.toList());
-                        catalog2Vo.setCatalog3List(catalog3Vos);
-                    }
-                    return catalog2Vo;
-                }).collect(Collectors.toList());
-            }
-            return catalog2Vos;
-        }));
-        return collect;
+
+        synchronized (this){
+            //得到锁以后，我们应该再去缓存中确定一次，过没有才需要继续查询
+            List<CategoryEntity> entityList = baseMapper.selectList(null);
+            // 查询所有一级分类
+            List<CategoryEntity> level1 = getCategoryEntities(entityList, 0L);
+            return level1.stream().collect(Collectors.toMap(k -> k.getCatId().toString(), v -> {
+                // 拿到每一个一级分类 然后查询他们的二级分类
+                List<CategoryEntity> entities = getCategoryEntities(entityList, v.getCatId());
+                List<Catalog2Vo> catalog2Vos = null;
+                if (entities != null) {
+                    catalog2Vos = entities.stream().map(l2 -> {
+                        Catalog2Vo catalog2Vo = new Catalog2Vo(v.getCatId().toString(), l2.getName(), l2.getCatId().toString(), null);
+                        // 找当前二级分类的三级分类
+                        List<CategoryEntity> level3 = getCategoryEntities(entityList, l2.getCatId());
+                        // 三级分类有数据的情况下
+                        if (level3 != null) {
+                            List<Catalog3Vo> catalog3Vos = level3.stream().map(l3 -> new Catalog3Vo(l3.getCatId().toString(), l3.getName(), l2.getCatId().toString())).collect(Collectors.toList());
+                            catalog2Vo.setCatalog3List(catalog3Vos);
+                        }
+                        return catalog2Vo;
+                    }).collect(Collectors.toList());
+                }
+                return catalog2Vos;
+            }));
+        }
+
     }
 
     /**
@@ -192,12 +196,12 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
      * @param all
      * @return
      */
-    private List<CategoryEntity> getChildrens(CategoryEntity root, List<CategoryEntity> all) {
+    private List<CategoryEntity> getChildren(CategoryEntity root, List<CategoryEntity> all) {
         List<CategoryEntity> collect = all.stream().filter(categoryEntity -> {
             return categoryEntity.getParentCid().equals(root.getCatId());
         }).map(categoryEntity -> {
             //1.找到子菜单
-            categoryEntity.setChildren(getChildrens(categoryEntity, all));
+            categoryEntity.setChildren(getChildren(categoryEntity, all));
             return categoryEntity;
         }).sorted((menu1, menu2) -> {
             //2.菜单的排序
