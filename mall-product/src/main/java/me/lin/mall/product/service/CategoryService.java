@@ -3,7 +3,7 @@ package me.lin.mall.product.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import me.lin.mall.common.utils.PageUtils;
 import me.lin.mall.product.entity.CategoryEntity;
-import me.lin.mall.product.vo.Catelog2Vo;
+import me.lin.mall.product.vo.Catalog2Vo;
 
 import java.util.List;
 import java.util.Map;
@@ -44,9 +44,9 @@ public interface CategoryService extends IService<CategoryEntity> {
     List<CategoryEntity> getLevelOneCategorys();
 
     /**
-     * 获取三级分类菜单
-     * @return 三级分类json
+     *  获取json分类数据
+     * @return 分类json数据
      */
-    Map<String, List<Catelog2Vo>> getCatalogJson();
+    Map<String,List<Catalog2Vo>> getCatalogJson();
 }
 

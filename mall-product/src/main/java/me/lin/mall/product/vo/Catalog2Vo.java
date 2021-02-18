@@ -14,18 +14,12 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class Catelog2Vo {
-    private String catalog1Id;
-    private List<Catalog3Vo> catalog3List;
+public class Catalog2Vo {
     private String id;
-    private String name;
-    @AllArgsConstructor
-    @NoArgsConstructor
-    @Data
-    public static class Catalog3Vo {
-        private String catalog2Id;
-        private String id;
-        private String name;
-    }
 
+    private String name;
+
+    private String catalog1Id;
+
+    private List<Catalog3Vo> catalog3List;
 }

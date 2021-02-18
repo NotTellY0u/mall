@@ -2,10 +2,11 @@ package me.lin.mall.product.web;
 
 import me.lin.mall.product.entity.CategoryEntity;
 import me.lin.mall.product.service.CategoryService;
-import me.lin.mall.product.vo.Catelog2Vo;
+import me.lin.mall.product.vo.Catalog2Vo;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.List;
@@ -29,16 +30,15 @@ public class IndexController {
     public String indexPage(Model model) {
 
         List<CategoryEntity> categoryEntityList = categoryService.getLevelOneCategorys();
-        model.addAttribute("categorys", categoryEntityList);
+        model.addAttribute("categorys",categoryEntityList);
         return "index";
     }
 
     @ResponseBody
-    @GetMapping("/index/catalog.json")
-    public Map<String, List<Catelog2Vo>> getCatalogJson() {
+    @RequestMapping("index/catalog.json")
+    public Map<String, List<Catalog2Vo>> getCatlogJson() {
 
-        Map<String, List<Catelog2Vo>> map = categoryService.getCatalogJson();
-
+        Map<String, List<Catalog2Vo>> map = categoryService.getCatalogJson();
         return map;
     }
 

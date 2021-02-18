@@ -50,9 +50,14 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
  * 		2）.静态资源放在static文件夹下旧课程按照路径直接访问
  * 		3）.页面放在templates下，直接访问
  * 		SpringBoot访问项目的时候会默认找index
+ * 	6.整合redis
+ * 		1) .引入data-redis-starter:
+ * 		2) .简单配置redis的host信息
+ * 		3）.使用SpringBoot自动配置好的StringRedisTemplate来操作redis
+ * 		redis -> map  key,value
  */
 
-@MapperScan("me.lin.mall.product.dao")
+@MapperScan("me.lin.mall.product.dao.*")
 @EnableFeignClients(basePackages = "me.lin.mall.product.feign")
 @EnableDiscoveryClient
 @SpringBootApplication
