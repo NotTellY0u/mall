@@ -489,6 +489,7 @@ vi mall.conf
 
 修改:
    location / {
+       	proxy_set_header Host $host;
         proxy_pass http://mall;
     }
 

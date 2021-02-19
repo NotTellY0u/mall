@@ -10,6 +10,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -117,16 +118,16 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
          */
 
         // 1.加入缓存逻辑,缓存中存的是json字符串
-        String catelogJSON = redisTemplate.opsForValue().get("catelogJSON");
-        if (StringUtils.isEmpty(catelogJSON)) {
+        String catalogJSON = redisTemplate.opsForValue().get("catalogJSON");
+        if (StringUtils.isEmpty(catalogJSON)) {
+            System.out.println("缓存未命中");
             //2. 缓存中没有，查询数据库
+            //保证数据库查询完成后，将数据放在redis中，这是一个原子操作
             Map<String, List<Catalog2Vo>> catalogJsonFromDb = getCatelogJsonFromDb();
-            //3. 查到的数据再放入缓存
-            String s = JSON.toJSONString(catalogJsonFromDb);
-            redisTemplate.opsForValue().set("catelogJSON",s);
             return catalogJsonFromDb;
         }
-        Map<String, List<Catalog2Vo>> result = JSON.parseObject(catelogJSON, new TypeReference<Map<String, List<Catalog2Vo>>>() {
+        System.out.println("缓存命中");
+        Map<String, List<Catalog2Vo>> result = JSON.parseObject(catalogJSON, new TypeReference<Map<String, List<Catalog2Vo>>>() {
         });
         return result;
     }
@@ -138,11 +139,19 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
     public Map<String, List<Catalog2Vo>> getCatelogJsonFromDb() {
 
         synchronized (this){
+
+            String catalogJSON = redisTemplate.opsForValue().get("catalogJSON");
+            if(StringUtils.isNotBlank(catalogJSON)){
+                Map<String, List<Catalog2Vo>> result = JSON.parseObject(catalogJSON, new TypeReference<Map<String, List<Catalog2Vo>>>() {
+                });
+                return result;
+            }
+            System.out.println("查询了数据库"+Thread.currentThread().getName());
             //得到锁以后，我们应该再去缓存中确定一次，过没有才需要继续查询
             List<CategoryEntity> entityList = baseMapper.selectList(null);
             // 查询所有一级分类
             List<CategoryEntity> level1 = getCategoryEntities(entityList, 0L);
-            return level1.stream().collect(Collectors.toMap(k -> k.getCatId().toString(), v -> {
+            Map<String, List<Catalog2Vo>> collect = level1.stream().collect(Collectors.toMap(k -> k.getCatId().toString(), v -> {
                 // 拿到每一个一级分类 然后查询他们的二级分类
                 List<CategoryEntity> entities = getCategoryEntities(entityList, v.getCatId());
                 List<Catalog2Vo> catalog2Vos = null;
@@ -161,6 +170,10 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
                 }
                 return catalog2Vos;
             }));
+            //3. 查到的数据再放入缓存
+            String s = JSON.toJSONString(collect);
+            redisTemplate.opsForValue().set("catalogJSON",s,1, TimeUnit.DAYS);
+            return collect;
         }
 
     }
