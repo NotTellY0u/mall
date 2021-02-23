@@ -125,13 +125,11 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
             System.out.println("缓存未命中");
             //2. 缓存中没有，查询数据库
             //保证数据库查询完成后，将数据放在redis中，这是一个原子操作
-            Map<String, List<Catalog2Vo>> catalogJsonFromDb = getCatalogJsonFromDbWithLocalLock();
-            return catalogJsonFromDb;
+            return getCatalogJsonFromDbWithRedisLock();
         }
         System.out.println("缓存命中");
-        Map<String, List<Catalog2Vo>> result = JSON.parseObject(catalogJSON, new TypeReference<Map<String, List<Catalog2Vo>>>() {
+        return JSON.parseObject(catalogJSON, new TypeReference<Map<String, List<Catalog2Vo>>>() {
         });
-        return result;
     }
 
     /**
@@ -151,7 +149,7 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
 
         String uuid = UUID.randomUUID().toString();
         // 1.占分布式锁
-        Boolean lock = redisTemplate.opsForValue().setIfAbsent("lock", uuid,300,TimeUnit.SECONDS);
+        boolean lock = redisTemplate.opsForValue().setIfAbsent("lock", uuid,300,TimeUnit.SECONDS);
 
         if(lock){
             System.out.println("获取分布式锁成功");
@@ -161,12 +159,17 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
                 dataFromDb = getDataFromDb();
             }finally {
                 String script = "if redis.call(‘get’,KEYS[1]) == ARGV[1] then return redis.call('del',KEYS[1]) else return 0 end";
-                Integer lock1 = redisTemplate.execute(new DefaultRedisScript<Integer>(script, Integer.class), Arrays.asList("lock"), uuid);
+                Long lock1 = redisTemplate.execute(new DefaultRedisScript<Long>(script, Long.class), Arrays.asList("lock"), uuid);
             }
             return dataFromDb;
         }else {
             //加锁失败
             System.out.println("获取分布式锁不成功");
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
             return getCatalogJsonFromDbWithRedisLock();
         }
 
