@@ -55,6 +55,10 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
  * 		2) .简单配置redis的host信息
  * 		3）.使用SpringBoot自动配置好的StringRedisTemplate来操作redis
  * 		redis -> map  key,value
+ *
+ * 	7.整合redisson作为分布式锁等功能的框架
+ * 		1) .引入依赖
+ * 		2) .配置redisson
  */
 
 @MapperScan("me.lin.mall.product.dao.*")
