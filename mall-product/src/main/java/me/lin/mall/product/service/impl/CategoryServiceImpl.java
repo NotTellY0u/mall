@@ -158,8 +158,8 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
             try {
                 dataFromDb = getDataFromDb();
             }finally {
-                String script = "if redis.call(‘get’,KEYS[1]) == ARGV[1] then return redis.call('del',KEYS[1]) else return 0 end";
-                Long lock1 = redisTemplate.execute(new DefaultRedisScript<Long>(script, Long.class), Arrays.asList("lock"), uuid);
+                String script = "if redis.call('get',KEYS[1]) == ARGV[1] then return redis.call('del',KEYS[1]) else return 0 end";
+                redisTemplate.execute(new DefaultRedisScript<>(script, Long.class), Arrays.asList("lock"), uuid);
             }
             return dataFromDb;
         }else {
