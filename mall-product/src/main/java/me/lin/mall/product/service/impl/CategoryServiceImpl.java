@@ -16,6 +16,7 @@ import me.lin.mall.product.vo.Catalog3Vo;
 import org.apache.commons.lang3.StringUtils;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.script.DefaultRedisScript;
@@ -92,6 +93,7 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
      *
      * @param category 分类名
      */
+    @CacheEvict(value = "category", key = "#root.method.name")
     @Transactional(rollbackFor = Exception.class)
     @Override
     public void updateCascade(CategoryEntity category) {
@@ -132,8 +134,7 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
      *
      * @return 分类json数据
      */
-    @Override
-    public Map<String, List<Catalog2Vo>> getCatalogJson() {
+    public Map<String, List<Catalog2Vo>> getCatalogJson2() {
         //给缓存中放json字符串，拿出的json字符串，还能逆转为能用的对象类型[序列化与反序列化]
 
         /*
@@ -153,6 +154,37 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
         System.out.println("缓存命中");
         return JSON.parseObject(catalogJSON, new TypeReference<Map<String, List<Catalog2Vo>>>() {
         });
+    }
+
+    @Cacheable(value = {"category"}, key = "#root.method.name", sync = true)
+    @Override
+    public Map<String, List<Catalog2Vo>> getCatalogJson() {
+        System.out.println("查询了数据库" + Thread.currentThread().getName());
+        //得到锁以后，我们应该再去缓存中确定一次，过没有才需要继续查询
+        List<CategoryEntity> entityList = baseMapper.selectList(null);
+        // 查询所有一级分类
+        List<CategoryEntity> level1 = getCategoryEntities(entityList, 0L);
+        Map<String, List<Catalog2Vo>> collect = level1.stream().collect(Collectors.toMap(k -> k.getCatId().toString(), v -> {
+            // 拿到每一个一级分类 然后查询他们的二级分类
+            List<CategoryEntity> entities = getCategoryEntities(entityList, v.getCatId());
+            List<Catalog2Vo> catalog2Vos = null;
+            if (entities != null) {
+                catalog2Vos = entities.stream().map(l2 -> {
+                    Catalog2Vo catalog2Vo = new Catalog2Vo(v.getCatId().toString(), l2.getName(), l2.getCatId().toString(), null);
+                    // 找当前二级分类的三级分类
+                    List<CategoryEntity> level3 = getCategoryEntities(entityList, l2.getCatId());
+                    // 三级分类有数据的情况下
+                    if (level3 != null) {
+                        List<Catalog3Vo> catalog3Vos = level3.stream().map(l3 -> new Catalog3Vo(l3.getCatId().toString(), l3.getName(), l2.getCatId().toString())).collect(Collectors.toList());
+                        catalog2Vo.setCatalog3List(catalog3Vos);
+                    }
+                    return catalog2Vo;
+                }).collect(Collectors.toList());
+            }
+            return catalog2Vos;
+        }));
+
+        return collect;
     }
 
     /**
