@@ -2,28 +2,29 @@ package me.lin.mall.product.service.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
-import me.lin.mall.product.service.CategoryBrandRelationService;
-import me.lin.mall.product.vo.Catalog2Vo;
-import me.lin.mall.product.vo.Catalog3Vo;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.data.redis.core.script.DefaultRedisScript;
-import org.springframework.stereotype.Service;
-
-import java.util.*;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
-
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import me.lin.mall.common.utils.PageUtils;
 import me.lin.mall.common.utils.Query;
-
 import me.lin.mall.product.dao.CategoryDao;
 import me.lin.mall.product.entity.CategoryEntity;
+import me.lin.mall.product.service.CategoryBrandRelationService;
 import me.lin.mall.product.service.CategoryService;
+import me.lin.mall.product.vo.Catalog2Vo;
+import me.lin.mall.product.vo.Catalog3Vo;
+import org.apache.commons.lang3.StringUtils;
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.script.DefaultRedisScript;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.*;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 
 @Service("categoryService")
@@ -35,12 +36,16 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
     final
     CategoryBrandRelationService categoryBrandRelationService;
 
+    final
+    RedissonClient redissonClient;
+
     private final StringRedisTemplate redisTemplate;
 
-    public CategoryServiceImpl(CategoryDao categoryDao, CategoryBrandRelationService categoryBrandRelationService, StringRedisTemplate redisTemplate) {
+    public CategoryServiceImpl(CategoryDao categoryDao, CategoryBrandRelationService categoryBrandRelationService, StringRedisTemplate redisTemplate, RedissonClient redissonClient) {
         this.categoryDao = categoryDao;
         this.categoryBrandRelationService = categoryBrandRelationService;
         this.redisTemplate = redisTemplate;
+        this.redissonClient = redissonClient;
     }
 
     @Override
@@ -94,13 +99,31 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
         categoryBrandRelationService.updateCategory(category.getCatId(), category.getName());
     }
 
+    /*
+      @Cacheable: 当前方法的结果需要缓存 并指定缓存名字
+     *  缓存的value值 默认使用jdk序列化
+     *  默认ttl时间 -1
+     *	key: 里面默认会解析表达式 字符串用 ''
+     *
+     *  自定义:
+     *  	1.指定生成缓存使用的key
+     *  	2.指定缓存数据存活时间	[配置文件中修改]
+     *  	3.将数据保存为json格式
+     *
+     *  sync = true: --- 开启同步锁
+
+     */
     /**
      * 获取一级分类
      *
      * @return 一级分类列表
      */
+    @Cacheable(value = {"category"}, key = "#root.method.name", sync = true)
     @Override
     public List<CategoryEntity> getLevelOneCategorys() {
+
+        System.out.println("运行了getLevelOneCategorys");
+
         return baseMapper.selectList(new QueryWrapper<CategoryEntity>().eq("parent_cid", "0"));
     }
 
@@ -113,10 +136,10 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
     public Map<String, List<Catalog2Vo>> getCatalogJson() {
         //给缓存中放json字符串，拿出的json字符串，还能逆转为能用的对象类型[序列化与反序列化]
 
-        /**
-         * 1.空结果缓存：解决缓存穿透
-         * 2.设置过期时间（加随机值）：解决缓存雪崩问题
-         * 3.加锁：解锁缓存击穿问题
+        /*
+          1.空结果缓存：解决缓存穿透
+          2.设置过期时间（加随机值）：解决缓存雪崩问题
+          3.加锁：解锁缓存击穿问题
          */
 
         // 1.加入缓存逻辑,缓存中存的是json字符串
@@ -145,24 +168,41 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
 
     }
 
+    public Map<String, List<Catalog2Vo>> getCatalogJsonFromDbWithRedissonLock() {
+
+
+        // 1.锁的名字
+        // 锁的粒度：具体缓存的是某个数据
+        RLock lock = redissonClient.getLock("catalogJson-lcok");
+        lock.lock();
+        Map<String, List<Catalog2Vo>> dataFromDb;
+        try {
+            dataFromDb = getDataFromDb();
+        } finally {
+            lock.unlock();
+        }
+        return dataFromDb;
+    }
+
+
     public Map<String, List<Catalog2Vo>> getCatalogJsonFromDbWithRedisLock() {
 
         String uuid = UUID.randomUUID().toString();
         // 1.占分布式锁
-        boolean lock = redisTemplate.opsForValue().setIfAbsent("lock", uuid,300,TimeUnit.SECONDS);
+        boolean lock = redisTemplate.opsForValue().setIfAbsent("lock", uuid, 300, TimeUnit.SECONDS);
 
-        if(lock){
+        if (lock) {
             System.out.println("获取分布式锁成功");
             //加锁成功，执行业务
             Map<String, List<Catalog2Vo>> dataFromDb = null;
             try {
                 dataFromDb = getDataFromDb();
-            }finally {
+            } finally {
                 String script = "if redis.call('get',KEYS[1]) == ARGV[1] then return redis.call('del',KEYS[1]) else return 0 end";
                 redisTemplate.execute(new DefaultRedisScript<>(script, Long.class), Arrays.asList("lock"), uuid);
             }
             return dataFromDb;
-        }else {
+        } else {
             //加锁失败
             System.out.println("获取分布式锁不成功");
             try {
@@ -172,7 +212,6 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
             }
             return getCatalogJsonFromDbWithRedisLock();
         }
-
 
 
     }

@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.annotation.Resource;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -29,18 +28,17 @@ import java.util.UUID;
 @Controller
 public class IndexController {
 
-    @Resource
-    private RedissonClient redisson;
-
+    private final RedissonClient redisson;
 
     final CategoryService categoryService;
 
     final
     StringRedisTemplate redisTemplate;
 
-    public IndexController(CategoryService categoryService, StringRedisTemplate redisTemplate) {
+    public IndexController(CategoryService categoryService, StringRedisTemplate redisTemplate, RedissonClient redisson) {
         this.categoryService = categoryService;
         this.redisTemplate = redisTemplate;
+        this.redisson = redisson;
     }
 
     @GetMapping({"/", "/index.html"})

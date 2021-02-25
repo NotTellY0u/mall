@@ -3,6 +3,7 @@ package me.lin.mall.product;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 
@@ -58,9 +59,20 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
  *
  * 	7.整合redisson作为分布式锁等功能的框架
  * 		1) .引入依赖
- * 		2) .配置redisson
+ * 		2) .配置redisson MyRedissonConfig给容器中配置一个RedissonClient实例即可
+ * 		3) .使用
+ * 			参照文档做
+ *
+ * 	8.整合springcache简化缓存开发
+ * 		1). 引入依赖
+ * 		spring-boot-starter-cache.spring-boot-data-redis
+ * 		2). 写配置
+ * 			（1) .自动配置了哪些
+ * 				cacheautoconfiguration会导入rediscacheconfiguration
+ * 				自动配置好缓存管理器rediscachemanager
+ * 			 (2) .配置使用redis作为缓存
+ * 		3). 测试使用缓存
  */
-
 @MapperScan("me.lin.mall.product.dao.*")
 @EnableFeignClients(basePackages = "me.lin.mall.product.feign")
 @EnableDiscoveryClient
