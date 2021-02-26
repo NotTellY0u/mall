@@ -18,6 +18,7 @@ import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.stereotype.Service;
@@ -93,7 +94,11 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
      *
      * @param category 分类名
      */
-    @CacheEvict(value = "category", key = "#root.method.name")
+//    @CacheEvict(value = "category", key = "#root.method.name")
+//    @Caching(evict = {
+//            @CacheEvict(value = "category", key = "'getLevelOneCategorys'"),
+//            @CacheEvict(value = "category", key = "'getCatalogJson'")})
+    @CacheEvict(value ="category", allEntries = true)
     @Transactional(rollbackFor = Exception.class)
     @Override
     public void updateCascade(CategoryEntity category) {
@@ -115,6 +120,7 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
      *  sync = true: --- 开启同步锁
 
      */
+
     /**
      * 获取一级分类
      *
