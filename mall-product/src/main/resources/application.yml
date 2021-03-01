@@ -17,14 +17,15 @@ spring:
     name: mall-product
   redis:
 #    win
-    host: 127.0.0.1
+#    host: 127.0.0.1
 #    mac
-#    host: 10.211.55.6
+    host: 10.211.55.6
     port: 6379
   cache:
     type: redis
     redis:
       time-to-live: 60000
+      use-key-prefix: true
 mybatis-plus:
   mapper-locations: classpath*:/mapper/**/*.xml
   global-config:
