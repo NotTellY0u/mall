@@ -500,6 +500,11 @@ vi mall.conf
     root  /usr/share/nginx/html;
     }
 
+搜索页静态资源修改：
+cd /mydata/nginx/conf/conf.d
+vi mall.conf
+ server_name *.linmall.com
+
 ```
 ### redis安装
 
