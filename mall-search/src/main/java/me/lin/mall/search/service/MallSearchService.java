@@ -1,6 +1,7 @@
 package me.lin.mall.search.service;
 
 import me.lin.mall.search.vo.SearchParam;
+import me.lin.mall.search.vo.SearchResult;
 
 /**
  * @Author Fibonacci
@@ -12,6 +13,7 @@ public interface MallSearchService {
     /**
      *  查询
      * @param param 查询条件
+     * @return
      */
-    void search(SearchParam param);
+    SearchResult search(SearchParam param);
 }

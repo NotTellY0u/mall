@@ -2,6 +2,7 @@ package me.lin.mall.search.service.impl;
 
 import me.lin.mall.search.service.MallSearchService;
 import me.lin.mall.search.vo.SearchParam;
+import me.lin.mall.search.vo.SearchResult;
 import org.springframework.stereotype.Service;
 
 /**
@@ -15,9 +16,11 @@ public class MallSearchServiceImpl implements MallSearchService {
     /**
      *  查询
      * @param param 检索的所有参数
+     * @return
      */
     @Override
-    public void search(SearchParam param) {
+    public SearchResult search(SearchParam param) {
 
+        return null;
     }
 }
