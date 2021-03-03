@@ -36,7 +36,12 @@ chmod -R 777 /mydocker/mall/elasticsearch/
 
 win
 ```
-docker run --name es -p 9200:9200 -p 9300:9300 -e "discovery.type=single-node" -e ES_JAVA_OPTS="-Xms64m -Xmx512m" -v /D:/ElasticSearch/config:/usr/share/elasticsearch/config -v /D:/elasticsearch/data:/usr/share/elasticsearch/data -v /D:/ElasticSearch/plugins:/usr/share/elaticsearch/plugins -d elasticsearch:7.4.2
+docker run --name es -p 9200:9200 -p 9300:9300 -e "discovery.type=single-node" -e ES_JAVA_OPTS="-Xms64m -Xmx512m" -v /D/ElasticSearch/config:/usr/share/elasticsearch/config -v /D/elasticsearch/data:/usr/share/elasticsearch/data -v /D/ElasticSearch/plugins:/usr/share/elasticsearch/plugins -d elasticsearch:7.4.2
+```
+
+开机自启动
+```
+docker update --restart=always es
 ```
 
 linux
