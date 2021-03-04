@@ -15,6 +15,16 @@ nacos中新增thirdParty命名空间，在mall-third-party中的bootstrap.proper
             endpoint: 
  ```
 
+curl -H "Content-Type: application/json" -XPOST 'http://127.0.0.1:9200/product/_mapping/brandName' -d '
+{
+"properties": {
+"state": {
+"type": "text",
+"fielddata": true
+}
+}
+}‘
+
 ### 日期格式调整
  ```
 jackson:
