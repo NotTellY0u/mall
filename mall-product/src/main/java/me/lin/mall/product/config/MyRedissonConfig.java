@@ -17,7 +17,7 @@ public class MyRedissonConfig {
     @Bean(destroyMethod = "shutdown")
     public RedissonClient redisson() {
         Config config = new Config();
-        config.useSingleServer().setAddress("redis://127.0.0.1:6379");
+        config.useSingleServer().setAddress("redis://10.211.55.6:6379");
         return Redisson.create(config);
     }
 }
