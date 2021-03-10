@@ -73,7 +73,7 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
  * 			 (2) .配置使用redis作为缓存
  * 		3). 测试使用缓存
  */
-@MapperScan("me.lin.mall.product.dao.*")
+//@MapperScan("me.lin.mall.product.dao.*")
 @EnableFeignClients(basePackages = "me.lin.mall.product.feign")
 @EnableDiscoveryClient
 @SpringBootApplication
