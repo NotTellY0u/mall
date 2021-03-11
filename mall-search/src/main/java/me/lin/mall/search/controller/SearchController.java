@@ -27,7 +27,7 @@ public class SearchController {
         // 1.根据传递来的页面的查询参数，去es中检索商品
         SearchResult result = mallSearchService.search(param);
         model.addAttribute("result",result);
-        return "list";
+            return "list";
     }
 
 }

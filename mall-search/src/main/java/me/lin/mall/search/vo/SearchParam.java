@@ -20,7 +20,7 @@ public class SearchParam {
     /**
      *   三级分类id
      */
-    private Long catalog3Id;
+    private Long catelog3Id;
     /**
      *  排序条件
      *  saleCount_asc/desc
