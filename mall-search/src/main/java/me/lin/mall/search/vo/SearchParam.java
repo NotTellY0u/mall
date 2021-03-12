@@ -34,7 +34,7 @@ public class SearchParam {
      * hasStock=0\1
      * skuPrice=1_500\500_1000
      */
-    private Integer hasStock  = 1;
+    private Integer hasStock;
     private String skuPrice;
     private List<Long> brandId;
     private List<String> attrs;

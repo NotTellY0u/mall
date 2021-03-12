@@ -92,7 +92,7 @@ public class MallSearchServiceImpl implements MallSearchService {
             for (SearchHit hit : hits.getHits()) {
                 String sourceAsString = hit.getSourceAsString();
                 SkuEsModel esModel = JSON.parseObject(sourceAsString, SkuEsModel.class);
-                if(StringUtils.isNotBlank(param.getKeyword())) {
+                if (StringUtils.isNotBlank(param.getKeyword())) {
                     HighlightField skuTitle = hit.getHighlightFields().get("skuTitle");
                     String string = skuTitle.getFragments()[0].string();
                     esModel.setSkuTitle(string);
@@ -136,7 +136,7 @@ public class MallSearchServiceImpl implements MallSearchService {
             // 2.得到品牌的名字
             String brandName = ((ParsedStringTerms) bucket.getAggregations().get("brand_name_agg")).getBuckets().get(0).getKeyAsString();
             // 3.得到品牌的图片
-            if(((ParsedStringTerms) bucket.getAggregations().get("brand_img_agg")).getBuckets().size() > 0) {
+            if (((ParsedStringTerms) bucket.getAggregations().get("brand_img_agg")).getBuckets().size() > 0) {
                 String brandImg = ((ParsedStringTerms) bucket.getAggregations().get("brand_img_agg")).getBuckets().get(0).getKeyAsString();
                 brandVo.setBrandImg(brandImg);
             }
@@ -214,7 +214,9 @@ public class MallSearchServiceImpl implements MallSearchService {
                 boolQuery.filter(nestedQuery);
             }
         }
-        boolQuery.filter(QueryBuilders.termQuery("hasStock", param.getHasStock() == 1));
+        if (param.getHasStock() != null) {
+            boolQuery.filter(QueryBuilders.termQuery("hasStock", param.getHasStock() == 1));
+        }
 
         if (StringUtils.isNotBlank(param.getSkuPrice())) {
             RangeQueryBuilder rangeQuery = QueryBuilders.rangeQuery("skuPrice");
@@ -271,8 +273,8 @@ public class MallSearchServiceImpl implements MallSearchService {
         sourceBuilder.aggregation(brandAgg);
 
         // 分类聚合
-        TermsAggregationBuilder catalogAgg = AggregationBuilders.terms("catalog_agg").field("catalogId").size(20);
-        catalogAgg.subAggregation(AggregationBuilders.terms("catalog_name_agg").field("catalogName").size(1));
+        TermsAggregationBuilder catalogAgg = AggregationBuilders.terms("catalog_agg").field("catelogId").size(20);
+        catalogAgg.subAggregation(AggregationBuilders.terms("catalog_name_agg").field("catelogName").size(10));
         sourceBuilder.aggregation(catalogAgg);
 
         // 属性聚合
