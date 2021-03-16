@@ -3,6 +3,7 @@ package me.lin.mall.search.vo;
 import lombok.Data;
 import me.lin.mall.common.to.es.SkuEsModel;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -12,7 +13,16 @@ import java.util.List;
  */
 @Data
 public class SearchResult {
-
+    /**
+     * 面包屑导航数据
+     */
+    private List<NavVo> navs = new ArrayList<>();
+    @Data
+    public static class NavVo{
+        private String navName;
+        private String navValue;
+        private String  link;
+    }
     /**
      * 查询到的所有商品信息
      */

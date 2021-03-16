@@ -1,10 +1,15 @@
 package me.lin.mall.search.service.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.TypeReference;
 import me.lin.mall.common.to.es.SkuEsModel;
+import me.lin.mall.common.utils.R;
 import me.lin.mall.search.config.ElasticConfig;
 import me.lin.mall.search.constant.EsConstant;
+import me.lin.mall.search.feign.ProductFeignService;
 import me.lin.mall.search.service.MallSearchService;
+import me.lin.mall.search.vo.AttrResponseVo;
+import me.lin.mall.search.vo.BrandVo;
 import me.lin.mall.search.vo.SearchParam;
 import me.lin.mall.search.vo.SearchResult;
 import org.apache.commons.lang3.StringUtils;
@@ -32,6 +37,8 @@ import org.elasticsearch.search.sort.SortOrder;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -44,10 +51,14 @@ import java.util.stream.Collectors;
 @Service("mallSearchService")
 public class MallSearchServiceImpl implements MallSearchService {
 
+    final
+    ProductFeignService productFeignService;
+
     private final RestHighLevelClient client;
 
-    public MallSearchServiceImpl(@Qualifier("esRestClient") RestHighLevelClient client) {
+    public MallSearchServiceImpl(@Qualifier("esRestClient") RestHighLevelClient client, ProductFeignService productFeignService) {
         this.client = client;
+        this.productFeignService = productFeignService;
     }
 
     /**
@@ -172,11 +183,68 @@ public class MallSearchServiceImpl implements MallSearchService {
 
         List<Integer> pageNavs = new ArrayList<>();
 
-        for (int i=1;i<=totalPages;i++){
+        for (int i = 1; i <= totalPages; i++) {
             pageNavs.add(i);
         }
         result.setPageNavs(pageNavs);
+
+        // 8.构造面包屑导航功能
+        if (param.getAttrs() != null && param.getAttrs().size() > 0) {
+            List<SearchResult.NavVo> navVos = param.getAttrs().stream().map(attr -> {
+                // 1.分析每个attrs传过来的查询参数值
+                SearchResult.NavVo navVo = new SearchResult.NavVo();
+                String[] s = attr.split("_");
+                navVo.setNavValue(s[1]);
+                R r = productFeignService.attrInfo(Long.parseLong(s[0]));
+                if (r.getCode() == 0) {
+                    AttrResponseVo attrResponseVo = r.getData("attr", new TypeReference<AttrResponseVo>() {
+                    });
+                    navVo.setNavName(attrResponseVo.getAttrName());
+                } else {
+                    navVo.setNavName(s[0]);
+                }
+                // 2. 取消这个面包屑以后，我们要跳转到哪个地方，将请求地址的URL替换掉
+                String encode = replaceQueryString(param, attr,"attrs");
+                navVo.setLink("http://search.linmall.com/list.html?" + encode);
+                System.out.println(encode);
+                return navVo;
+            }).collect(Collectors.toList());
+            result.setNavs(navVos);
+        }
+
+        if(param.getBrandId() != null && param.getBrandId().size() > 0){
+            List<SearchResult.NavVo> navs = result.getNavs();
+            SearchResult.NavVo navVo = new SearchResult.NavVo();
+            navVo.setNavName("品牌");
+            R r = productFeignService.brandInfo(param.getBrandId());
+            if(r.getCode() == 0){
+                List<BrandVo> brand = r.getData("brand", new TypeReference<List<BrandVo>>() {
+                });
+                StringBuffer stringBuffer = new StringBuffer();
+                String  replace = null;
+                for (BrandVo brandVo : brand) {
+                    stringBuffer.append(brandVo.getBrandName()+";");
+                    replace = replaceQueryString(param, brandVo.getBrandId() + "", "brandId");
+                }
+                navVo.setNavValue(stringBuffer.toString());
+                navVo.setLink("http://search.linmall.com/list.html?" + replace);
+            }
+            navs.add(navVo);
+        }
+
         return result;
+    }
+
+    private String replaceQueryString(SearchParam param, String value, String key) {
+        String encode = null;
+        try {
+            encode = URLEncoder.encode(value, "UTF-8");
+            encode = encode.replace("+","%20");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        String replace = param.get_queryString().replace("&"+key+"=" + encode, "");
+        return encode;
     }
 
     /**
