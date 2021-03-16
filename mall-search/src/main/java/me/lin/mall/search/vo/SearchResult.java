@@ -44,6 +44,10 @@ public class SearchResult {
      * 当前查询到的结果所有涉及到的属性
      */
     private List<AttrVo> attrs;
+    /**
+     * 导航页码
+     */
+    private List<Integer> pageNavs;
 
     @Data
     public static class BrandVo{
