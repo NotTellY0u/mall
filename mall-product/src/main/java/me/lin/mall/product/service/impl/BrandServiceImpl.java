@@ -1,12 +1,16 @@
 package me.lin.mall.product.service.impl;
 
 import me.lin.mall.product.service.CategoryBrandRelationService;
+import me.lin.mall.product.vo.BrandVo;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -63,8 +67,14 @@ public class BrandServiceImpl extends ServiceImpl<BrandDao, BrandEntity> impleme
      * @return 品牌信息
      */
     @Override
-    public List<BrandEntity> getBrandsByIds(List<Long> brandIds) {
-        return baseMapper.selectList(new QueryWrapper<BrandEntity>().in("brandId", brandIds));
+    public List<BrandVo> getBrandsByIds(List<Long> brandIds) {
+        List<BrandEntity> brandEntities = baseMapper.selectList(new QueryWrapper<BrandEntity>().in("brand_id", brandIds));
+        return brandEntities.stream().map(brandEntity -> {
+            BrandVo brandVo = new BrandVo();
+            brandVo.setBrandId(brandEntity.getBrandId());
+            brandVo.setBrandName(brandEntity.getName());
+            return brandVo;
+        }).collect(Collectors.toList());
     }
 
 }

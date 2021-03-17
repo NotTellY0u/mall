@@ -112,6 +112,9 @@ public class MallSearchServiceImpl implements MallSearchService {
             }
         }
         result.setProducts(esModels);
+
+
+
         // 2.当前所有商品涉及到的属性信息
         List<SearchResult.AttrVo> attrVos = new ArrayList<>();
         ParsedNested attrAgg = response.getAggregations().get("attr_agg");
@@ -132,7 +135,6 @@ public class MallSearchServiceImpl implements MallSearchService {
             attrVo.setAttrId(attrId);
             attrVo.setAttrName(attrName);
             attrVo.setAttrValue(attrValues);
-
             attrVos.add(attrVo);
         }
         result.setAttrs(attrVos);
@@ -196,6 +198,7 @@ public class MallSearchServiceImpl implements MallSearchService {
                 String[] s = attr.split("_");
                 navVo.setNavValue(s[1]);
                 R r = productFeignService.attrInfo(Long.parseLong(s[0]));
+                result.getAttrIds().add(Long.parseLong(s[0]));
                 if (r.getCode() == 0) {
                     AttrResponseVo attrResponseVo = r.getData("attr", new TypeReference<AttrResponseVo>() {
                     });
@@ -240,11 +243,12 @@ public class MallSearchServiceImpl implements MallSearchService {
         try {
             encode = URLEncoder.encode(value, "UTF-8");
             encode = encode.replace("+","%20");
+            encode = encode.replace("%28", "(").replace("%29",")");
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
         String replace = param.get_queryString().replace("&"+key+"=" + encode, "");
-        return encode;
+        return replace;
     }
 
     /**

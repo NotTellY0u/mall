@@ -7,6 +7,7 @@ import me.lin.mall.common.valid.UpdateGroup;
 import me.lin.mall.common.valid.UpdateStatusGroup;
 import me.lin.mall.product.entity.BrandEntity;
 import me.lin.mall.product.service.BrandService;
+import me.lin.mall.product.vo.BrandVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -41,7 +42,7 @@ public class BrandController {
 
     @GetMapping("/infos")
     public R infos(@RequestParam("brandIds")List<Long> brandIds){
-        List<BrandEntity> brandList = brandService.getBrandsByIds(brandIds);
+        List<BrandVo> brandList = brandService.getBrandsByIds(brandIds);
         return R.ok().put("brand", brandList);
     }
 
