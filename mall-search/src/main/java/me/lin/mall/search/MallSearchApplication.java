@@ -13,9 +13,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 public class MallSearchApplication {
 
     public static void main(String[] args) {
-        ConfigurableApplicationContext run = SpringApplication.run(MallSearchApplication.class, args);
-        System.out.println(run.getEnvironment());
-        System.out.println(run.getClass());
+        SpringApplication.run(MallSearchApplication.class, args);
 
     }
 
