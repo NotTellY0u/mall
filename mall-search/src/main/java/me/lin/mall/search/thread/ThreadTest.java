@@ -1,14 +1,21 @@
 package me.lin.mall.search.thread;
 
+import java.util.concurrent.*;
+
 /**
  * @Author Fibonacci
  * @Date 2021/3/17 10:41 上午
  * @Version 1.0
  */
 public class ThreadTest {
+
+    public static ExecutorService executorService = Executors.newFixedThreadPool(10);
+
     public static void main(String[] args) {
+        System.out.println("start");
         Thread01 thread01=  new Thread01();
-        thread01.start();
+        CompletableFuture.runAsync(thread01,executorService);
+        System.out.println("end");
     }
 
     public static class Thread01 extends Thread{

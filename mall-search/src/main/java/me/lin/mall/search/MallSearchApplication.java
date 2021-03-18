@@ -5,6 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.openfeign.EnableFeignClients;
+import org.springframework.context.ConfigurableApplicationContext;
 
 @EnableFeignClients
 @SpringBootApplication(exclude = {DataSourceAutoConfiguration.class})
@@ -12,7 +13,10 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 public class MallSearchApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(MallSearchApplication.class, args);
+        ConfigurableApplicationContext run = SpringApplication.run(MallSearchApplication.class, args);
+        System.out.println(run.getEnvironment());
+        System.out.println(run.getClass());
+
     }
 
 }
