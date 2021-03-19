@@ -1,5 +1,6 @@
 package me.lin.mall.search.thread;
 
+import java.math.BigDecimal;
 import java.util.concurrent.*;
 
 /**
@@ -16,6 +17,9 @@ public class ThreadTest {
         Thread01 thread01=  new Thread01();
         CompletableFuture.runAsync(thread01,executorService);
         System.out.println("end");
+        String a = "10.00";
+        BigDecimal decimal = new BigDecimal(a);
+        System.out.println(decimal);
     }
 
     public static class Thread01 extends Thread{
