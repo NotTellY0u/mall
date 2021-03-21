@@ -3,6 +3,7 @@ package me.lin.mall.product.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import me.lin.mall.common.utils.PageUtils;
 import me.lin.mall.product.entity.SkuInfoEntity;
+import me.lin.mall.product.vo.SkuItemVo;
 
 import java.util.List;
 import java.util.Map;
@@ -37,5 +38,12 @@ public interface SkuInfoService extends IService<SkuInfoEntity> {
      * @return sku信息
      */
     List<SkuInfoEntity> getSkuBySpuId(Long spuId);
+
+    /**
+     *
+     * @param skuId 商品id
+     * @return 页面信息
+     */
+    SkuItemVo item(Long skuId);
 }
 

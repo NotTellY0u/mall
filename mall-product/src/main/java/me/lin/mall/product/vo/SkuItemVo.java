@@ -1,0 +1,22 @@
+package me.lin.mall.product.vo;
+
+import lombok.Data;
+import me.lin.mall.product.entity.SkuImagesEntity;
+import me.lin.mall.product.entity.SkuInfoEntity;
+import me.lin.mall.product.entity.SpuInfoDescEntity;
+
+import java.util.List;
+
+/**
+ * @Author Fibonacci
+ * @Date 2021/3/21 2:36 下午
+ * @Version 1.0
+ */
+@Data
+public class SkuItemVo {
+    SkuInfoEntity skuInfoEntity;
+    List<SkuImagesEntity> images;
+
+    SpuInfoDescEntity desp;
+
+}
