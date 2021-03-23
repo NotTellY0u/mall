@@ -3,7 +3,9 @@ package me.lin.mall.product.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import me.lin.mall.common.utils.PageUtils;
 import me.lin.mall.product.entity.SkuSaleAttrValueEntity;
+import me.lin.mall.product.vo.SkuItemSaleAttrVo;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -16,5 +18,12 @@ import java.util.Map;
 public interface SkuSaleAttrValueService extends IService<SkuSaleAttrValueEntity> {
 
     PageUtils queryPage(Map<String, Object> params);
+
+    /**
+     * 返回销售信息集合
+     * @param spuId spuId
+     * @return 销售信息集合
+     */
+    List<SkuItemSaleAttrVo> getSaleAttrsBySpuId(Long spuId);
 }
 
