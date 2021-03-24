@@ -1304,13 +1304,27 @@
 </script>
 <script>
     $(".sku_attr_value").click(function(){
-        // 1.获取当前skus组合
-
+        // 1.点击的元素先加上自定义属性，为了识别是我们刚才被点击的
+        var skus = new Array()
+        $(this).addClass("clicked")
+        let curr = $(this).attr("skus").split(",")
+        // 当前被点击的所有sku组合数组放进去
+        skus.push(curr)
+        //去掉同一行所有的checked
+        $(this).parent().parent().find(".sku_attr_value").removeClass("checked")
+        $("a[class='sku_attr_value checked']").each(function(){
+            skus.push($(this).attr("skus").split(","))
+        })
+        console.log(skus)
         // 2.获取到另外一个选中的属性的组合
-
+        let filterElement = skus[0]
+        for(let i=1;i<skus.length;i++){
+            filterElement = $(filterElement).filter(skus[i])
+        }
         // 3.取出他们的交集，得到skuId
-
+        console.log(filterElement)
         // 4.跳转
+        location.href = "http://item.linmall.com/"+filterElement[0]+".html"
     })
     $(function (){
         $(".sku_attr_value").parent().css({"border":"solid 1px #CCC"})
