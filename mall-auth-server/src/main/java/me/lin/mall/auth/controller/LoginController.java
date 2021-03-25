@@ -1,7 +1,6 @@
 package me.lin.mall.auth.controller;
 
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
 
 /**
  * @Author Fibonacci
@@ -10,15 +9,5 @@ import org.springframework.web.bind.annotation.GetMapping;
  */
 @Controller
 public class LoginController {
-    @GetMapping("/login.html")
-    public String loginPage(){
-        System.out.println("login");
-        return "login";
-    }
 
-    @GetMapping("/reg.html")
-    public String regPage(){
-        System.out.println("reg");
-        return "reg";
-    }
 }
