@@ -63,3 +63,8 @@ spring:
           uri: lb://mall-search
           predicates:
             - Host=search.linmall.com
+
+        - id: mall_auth_route
+          uri: lb://mall-auth-server
+          predicates:
+            - Host=auth.linmall.com
