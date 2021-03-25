@@ -13,7 +13,7 @@ public class LoginController {
     @GetMapping("/login.html")
     public String loginPage(){
         System.out.println("login");
-        return "index";
+        return "login";
     }
 
     @GetMapping("/reg.html")
