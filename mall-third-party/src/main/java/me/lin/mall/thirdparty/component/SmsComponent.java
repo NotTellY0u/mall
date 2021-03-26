@@ -24,6 +24,7 @@ public class SmsComponent {
     private String skin;
     private String appCode;
     private String area;
+    private String time;
 
     public void sendSmsCode(String phoneNumber, String code) {
         String method = "POST";
@@ -39,7 +40,7 @@ public class SmsComponent {
         bodys.put("channel", "0");
         bodys.put("mobile", area + phoneNumber);
         bodys.put("templateID", skin);
-        bodys.put("templateParamSet", code);
+        bodys.put("templateParamSet", code + "," + time);
 
 
         try {
