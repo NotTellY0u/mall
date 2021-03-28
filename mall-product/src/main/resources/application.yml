@@ -3,7 +3,7 @@ spring:
     username: root
     password: root
 #    url: jdbc:mysql://localhost:3306/mall_pms?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
-    url: jdbc:mysql://10.211.55.6:3306/mall_pms
+    url: jdbc:mysql://10.211.55.6:3306/mall_pms?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
     driver-class-name: com.mysql.cj.jdbc.Driver
   cloud:
     nacos:
@@ -33,6 +33,10 @@ mybatis-plus:
       id-type: auto
       logic-delete-value: 1
       logic-not-delete-value: 0
-
 server:
   port: 10000
+mall:
+  thread:
+    core-size: 20
+    max-size: 200
+    keep-alive-time: 10
