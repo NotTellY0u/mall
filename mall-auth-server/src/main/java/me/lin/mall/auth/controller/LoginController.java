@@ -3,6 +3,7 @@ package me.lin.mall.auth.controller;
 import com.alibaba.fastjson.TypeReference;
 import me.lin.mall.auth.feign.MemberFeignService;
 import me.lin.mall.auth.feign.ThirdPartyFeignService;
+import me.lin.mall.auth.vo.UserLoginVo;
 import me.lin.mall.auth.vo.UserRegistVo;
 import me.lin.mall.common.constant.AuthServerConstant;
 import me.lin.mall.common.exception.BizCodeEnum;
@@ -107,7 +108,7 @@ public class LoginController {
                     return "redirect:http://auth.linmall.com/login.html";
                 } else {
                     Map<String, String> errors = new HashMap<>();
-                    errors.put("msg", r.getData(new TypeReference<String>() {
+                    errors.put("msg", r.getData("msg", new TypeReference<String>() {
                     }));
                     redirectAttributes.addFlashAttribute("errors", errors);
                     return "redirect:http://auth.linmall.com/reg.html";
@@ -126,5 +127,22 @@ public class LoginController {
             redirectAttributes.addFlashAttribute("errors", errors);
             return "redirect:http://auth.linmall.com/reg.html";
         }
+    }
+
+    @PostMapping("/login")
+    public String login(UserLoginVo loginVo, RedirectAttributes attributes) {
+
+        R r = memberFeignService.login(loginVo);
+        if (r.getCode() == 0) {
+            return "redirect:http://linmall.com/";
+        } else {
+            Map<String, String> errors = new HashMap<>();
+            errors.put("msg", r.getData("msg", new TypeReference<String>() {
+            }));
+            attributes.addFlashAttribute("errors", errors);
+            return "redirect:http://auth.linmall.com/login.html";
+        }
+
+
     }
 }

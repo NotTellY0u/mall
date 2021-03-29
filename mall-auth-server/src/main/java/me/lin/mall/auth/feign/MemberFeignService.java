@@ -1,5 +1,6 @@
 package me.lin.mall.auth.feign;
 
+import me.lin.mall.auth.vo.UserLoginVo;
 import me.lin.mall.auth.vo.UserRegistVo;
 import me.lin.mall.common.utils.R;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -15,4 +16,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 public interface MemberFeignService {
     @PostMapping("/member/member/regist")
     R regist(@RequestBody UserRegistVo registVo);
+
+    @PostMapping("/member/member/login")
+    R login(@RequestBody UserLoginVo vo);
 }

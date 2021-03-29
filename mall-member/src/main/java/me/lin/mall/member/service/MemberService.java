@@ -5,6 +5,7 @@ import me.lin.mall.common.utils.PageUtils;
 import me.lin.mall.member.entity.MemberEntity;
 import me.lin.mall.member.exception.PhoneExistException;
 import me.lin.mall.member.exception.UsernameExistException;
+import me.lin.mall.member.vo.MemberLoginVo;
 import me.lin.mall.member.vo.MemberRegistVo;
 
 import java.util.Map;
@@ -40,5 +41,11 @@ public interface MemberService extends IService<MemberEntity> {
      * @return 用户名是否正确
      */
     void checkUserNameUnique(String userName) throws UsernameExistException;
+
+    /**
+     * @param vo 登录数据
+     * @return 登录信息
+     */
+    MemberEntity login(MemberLoginVo vo);
 }
 

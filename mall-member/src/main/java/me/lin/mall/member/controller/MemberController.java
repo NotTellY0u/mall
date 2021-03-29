@@ -8,6 +8,7 @@ import me.lin.mall.member.exception.PhoneExistException;
 import me.lin.mall.member.exception.UsernameExistException;
 import me.lin.mall.member.feign.CouponFeignService;
 import me.lin.mall.member.service.MemberService;
+import me.lin.mall.member.vo.MemberLoginVo;
 import me.lin.mall.member.vo.MemberRegistVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -105,4 +106,15 @@ public class MemberController {
         return R.ok();
     }
 
+    @PostMapping("/login")
+    public R login(@RequestBody MemberLoginVo vo) {
+
+        MemberEntity memberEntity = memberService.login(vo);
+        if (memberEntity != null) {
+            return R.ok();
+        } else {
+            return R.error(BizCodeEnum.LOGINACCT_PASSWORD_INVAILD_EXCEPTION.getCode(),
+                    BizCodeEnum.LOGINACCT_PASSWORD_INVAILD_EXCEPTION.getMsg());
+        }
+    }
 }
