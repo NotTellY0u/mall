@@ -1,20 +1,19 @@
 package me.lin.mall.member.controller;
 
-import java.util.Arrays;
-import java.util.Map;
-
-import me.lin.mall.member.feign.CouponFeignService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
-import me.lin.mall.member.entity.MemberEntity;
-import me.lin.mall.member.service.MemberService;
+import me.lin.mall.common.exception.BizCodeEnum;
 import me.lin.mall.common.utils.PageUtils;
 import me.lin.mall.common.utils.R;
+import me.lin.mall.member.entity.MemberEntity;
+import me.lin.mall.member.exception.PhoneExistException;
+import me.lin.mall.member.exception.UsernameExistException;
+import me.lin.mall.member.feign.CouponFeignService;
+import me.lin.mall.member.service.MemberService;
+import me.lin.mall.member.vo.MemberRegistVo;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Arrays;
+import java.util.Map;
 
 
 /**
@@ -91,6 +90,18 @@ public class MemberController {
     public R delete(@RequestBody Long[] ids) {
         memberService.removeByIds(Arrays.asList(ids));
 
+        return R.ok();
+    }
+
+    @PostMapping("/regist")
+    public R regist(@RequestBody MemberRegistVo registVo) {
+        try {
+            memberService.regist(registVo);
+        } catch (PhoneExistException e) {
+            return R.error(BizCodeEnum.PHONE_EXIST_EXCEPTION.getCode(), BizCodeEnum.PHONE_EXIST_EXCEPTION.getMsg());
+        } catch (UsernameExistException e) {
+            return R.error(BizCodeEnum.USER_EXIST_EXCEPTION.getCode(), BizCodeEnum.USER_EXIST_EXCEPTION.getMsg());
+        }
         return R.ok();
     }
 

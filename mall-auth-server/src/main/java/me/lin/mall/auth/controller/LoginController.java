@@ -1,5 +1,7 @@
 package me.lin.mall.auth.controller;
 
+import com.alibaba.fastjson.TypeReference;
+import me.lin.mall.auth.feign.MemberFeignService;
 import me.lin.mall.auth.feign.ThirdPartyFeignService;
 import me.lin.mall.auth.vo.UserRegistVo;
 import me.lin.mall.common.constant.AuthServerConstant;
@@ -15,8 +17,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -33,9 +37,12 @@ public class LoginController {
 
     final StringRedisTemplate redisTemplate;
 
-    public LoginController(ThirdPartyFeignService thirdPartyFeignService, StringRedisTemplate redisTemplate) {
+    final MemberFeignService memberFeignService;
+
+    public LoginController(ThirdPartyFeignService thirdPartyFeignService, StringRedisTemplate redisTemplate, MemberFeignService memberFeignService) {
         this.thirdPartyFeignService = thirdPartyFeignService;
         this.redisTemplate = redisTemplate;
+        this.memberFeignService = memberFeignService;
     }
 
     @ResponseBody
@@ -61,19 +68,63 @@ public class LoginController {
 
         redisTemplate.opsForValue().set(AuthServerConstant.SMS_CODE_CHACHE_PREFIX + phone, code, 10, TimeUnit.MINUTES);
 
-        thirdPartyFeignService.sendCode(phone, code);
+        thirdPartyFeignService.sendCode(phone, String.valueOf(s));
         return R.ok();
     }
 
+    /**
+     * 重定向携带数据，利用session原理，将数据放在session中
+     * RedirectAttributes redirectAttributes: 模拟重定向携带数据
+     *
+     * @param registVo 登录信息
+     * @param result   错误结果
+     * @param model    模型
+     * @return 注册结果
+     */
     @PostMapping("/regist")
-    public String regist(@Valid UserRegistVo registVo, BindingResult result, Model model) {
+    public String regist(@Valid UserRegistVo registVo, BindingResult result, Model model, RedirectAttributes redirectAttributes) {
         if (result.hasErrors()) {
             Map<String, String> errors = result.getFieldErrors().stream().collect(Collectors.toMap(
                     FieldError::getField, FieldError::getDefaultMessage));
 
-            model.addAttribute("errors", errors);
-            return "forward:/reg.html";
+//            model.addAttribute("errors", errors);
+            redirectAttributes.addFlashAttribute("errors", errors);
+            return "redirect:http://auth.linmall.com/reg.html";
         }
-        return "redirect:/login.html";
+
+        // 1.真正注册，调用远程服务进行注册
+
+        // 1.校验验证码
+        String code = registVo.getCode();
+        String s = redisTemplate.opsForValue().get(AuthServerConstant.SMS_CODE_CHACHE_PREFIX + registVo.getPhone());
+        if (StringUtils.isNotBlank(s)) {
+            String split = s.split("_")[0];
+            if (code.equals(split)) {
+                // 删除验证码，令牌机制
+                redisTemplate.delete(AuthServerConstant.SMS_CODE_CHACHE_PREFIX + registVo.getPhone());
+                R r = memberFeignService.regist(registVo);
+                if (r.getCode() == 0) {
+                    return "redirect:http://auth.linmall.com/login.html";
+                } else {
+                    Map<String, String> errors = new HashMap<>();
+                    errors.put("msg", r.getData(new TypeReference<String>() {
+                    }));
+                    redirectAttributes.addFlashAttribute("errors", errors);
+                    return "redirect:http://auth.linmall.com/reg.html";
+                }
+            } else {
+                Map<String, String> errors = new HashMap<>();
+                errors.put("code", "验证码错误");
+//                  model.addAttribute("errors", errors);
+                redirectAttributes.addFlashAttribute("errors", errors);
+                return "redirect:http://auth.linmall.com/reg.html";
+            }
+        } else {
+            Map<String, String> errors = new HashMap<>();
+            errors.put("code", "验证码错误");
+//                model.addAttribute("errors", errors);
+            redirectAttributes.addFlashAttribute("errors", errors);
+            return "redirect:http://auth.linmall.com/reg.html";
+        }
     }
 }
