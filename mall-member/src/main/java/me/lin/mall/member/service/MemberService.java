@@ -7,6 +7,7 @@ import me.lin.mall.member.exception.PhoneExistException;
 import me.lin.mall.member.exception.UsernameExistException;
 import me.lin.mall.member.vo.MemberLoginVo;
 import me.lin.mall.member.vo.MemberRegistVo;
+import me.lin.mall.member.vo.SocialUser;
 
 import java.util.Map;
 
@@ -47,5 +48,13 @@ public interface MemberService extends IService<MemberEntity> {
      * @return 登录信息
      */
     MemberEntity login(MemberLoginVo vo);
+
+    /**
+     * 社交登录
+     *
+     * @param socialUser 社交用户信息
+     * @return 登录信息
+     */
+    MemberEntity login(SocialUser socialUser) throws Exception;
 }
 
