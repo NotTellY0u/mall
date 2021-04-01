@@ -7,6 +7,6 @@ package me.lin.mall.common.constant;
  */
 public class AuthServerConstant {
     public static final String SMS_CODE_CHACHE_PREFIX = "sms:code:";
-
+    public static final String LOGIN_USER = "loginUser";
 
 }

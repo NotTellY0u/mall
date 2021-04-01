@@ -58,7 +58,9 @@
                 </li>
             </ul>
             <ul class="header_ul_right">
-                <li style="border: 0;"><a href="/static/item/../登录页面\index.html" class="aa">你好，请登录</a></li>
+                <li style="border: 0;">
+                    <!--                    <a href="http://auth.linmall.com/login.html" th:if="${session.loginUser == null}" class="aa">你好，请登录</a></li>-->
+                    <!--                    <a th:else class="aa">你好,[[${session.loginUser.nickname}]]</a>-->
                 <li><a href="/static/item/../注册页面\index.html" style="color: red;">免费注册</a> |</li>
                 <li><a href="/static/item/javascript:;" class="aa">我的订单</a> |</li>
                 <li class="jingdong"><a href="/static/item/javascript:;">我的京东</a><span
@@ -249,6 +251,12 @@
                             </div>
                         </div>
                     </div>
+                    |
+                </li>
+                <li class="sjjd" style="border: 0;">
+                    <a class="aa" href="http://auth.linmall.com/login.html"
+                       th:if="${session.loginUser == null}">你好，请登录</a>
+                    <a class="aa" th:else>你好,[[${session.loginUser.nickname}]]</a>
                 </li>
             </ul>
         </div>
@@ -1305,7 +1313,7 @@
 <script>
     $(".sku_attr_value").click(function(){
         // 1.点击的元素先加上自定义属性，为了识别是我们刚才被点击的
-        var skus = new Array()
+        var skus = []
         $(this).addClass("clicked")
         let curr = $(this).attr("skus").split(",")
         // 当前被点击的所有sku组合数组放进去

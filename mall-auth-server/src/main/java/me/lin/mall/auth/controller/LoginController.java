@@ -8,6 +8,7 @@ import me.lin.mall.auth.vo.UserRegistVo;
 import me.lin.mall.common.constant.AuthServerConstant;
 import me.lin.mall.common.exception.BizCodeEnum;
 import me.lin.mall.common.utils.R;
+import me.lin.mall.common.vo.MemberRespVo;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Controller;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.Map;
@@ -129,11 +131,24 @@ public class LoginController {
         }
     }
 
+    @GetMapping("/login.html")
+    public String loginPage(HttpSession session) {
+        Object attribute = session.getAttribute(AuthServerConstant.LOGIN_USER);
+        if (attribute == null) {
+            return "login";
+        } else {
+            return "redirect:http://linmall.com/";
+        }
+    }
+
     @PostMapping("/login")
-    public String login(UserLoginVo loginVo, RedirectAttributes attributes) {
+    public String login(UserLoginVo loginVo, RedirectAttributes attributes, HttpSession session) {
 
         R r = memberFeignService.login(loginVo);
         if (r.getCode() == 0) {
+            MemberRespVo data = r.getData("data", new TypeReference<MemberRespVo>() {
+            });
+            session.setAttribute(AuthServerConstant.LOGIN_USER, data);
             return "redirect:http://linmall.com/";
         } else {
             Map<String, String> errors = new HashMap<>();

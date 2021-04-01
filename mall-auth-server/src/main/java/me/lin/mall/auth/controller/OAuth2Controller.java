@@ -5,10 +5,11 @@ import com.alibaba.fastjson.TypeReference;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import me.lin.mall.auth.feign.MemberFeignService;
-import me.lin.mall.auth.vo.MemberRespVo;
 import me.lin.mall.auth.vo.SocialUser;
+import me.lin.mall.common.constant.AuthServerConstant;
 import me.lin.mall.common.utils.HttpUtils;
 import me.lin.mall.common.utils.R;
+import me.lin.mall.common.vo.MemberRespVo;
 import org.apache.http.HttpResponse;
 import org.apache.http.util.EntityUtils;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import javax.servlet.http.HttpSession;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -43,7 +45,7 @@ public class OAuth2Controller {
     }
 
     @GetMapping("/oauth2.0/weibo/success")
-    public String weibo(@RequestParam(value = "code") String code) throws Exception {
+    public String weibo(@RequestParam(value = "code") String code, HttpSession session) throws Exception {
         System.out.println("进入/oauth2.0/weibo/success");
         //1.根据code换取accessToken
         HashMap<String, String> map = new HashMap<>();
@@ -65,7 +67,10 @@ public class OAuth2Controller {
             if (oauthlogin.getCode() == 0) {
                 MemberRespVo data = oauthlogin.getData("data", new TypeReference<MemberRespVo>() {
                 });
-                log.info("登陆成功：用户：「」", data.toString());
+                session.setAttribute(AuthServerConstant.LOGIN_USER, data);
+
+                log.info("登陆成功：用户：" + data.toString());
+                log.info("登陆成功：用户：" + data.getNickname());
                 return "redirect:http://linmall.com/";
             } else {
                 return "redirect:http://auth.linmall.com/login.html";

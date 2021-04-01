@@ -17,8 +17,8 @@ spring:
     name: mall-product
   redis:
 #    win
-#    host: 127.0.0.1
-#    mac
+    #    host: 127.0.0.1
+    #    mac
     host: 10.211.55.6
     port: 6379
   cache:
@@ -26,6 +26,8 @@ spring:
     redis:
       time-to-live: 60000
       use-key-prefix: true
+  session:
+    store-type: redis
 mybatis-plus:
   mapper-locations: classpath*:/mapper/**/*.xml
   global-config:
@@ -33,6 +35,7 @@ mybatis-plus:
       id-type: auto
       logic-delete-value: 1
       logic-not-delete-value: 0
+
 server:
   port: 10000
 mall:
