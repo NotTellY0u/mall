@@ -1,4 +1,4 @@
-package me.lin.mall.auth.config;
+package me.lin.mall.cart.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,8 +13,9 @@ import org.springframework.session.web.http.DefaultCookieSerializer;
  * @Version 1.0
  */
 
+
 @Configuration
-public class MailSessionConfig {
+public class MallSessionConfig {
 
     @Bean
     public CookieSerializer cookieSerializer() {
