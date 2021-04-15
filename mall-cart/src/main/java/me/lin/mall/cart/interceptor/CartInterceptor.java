@@ -67,12 +67,11 @@ public class CartInterceptor implements HandlerInterceptor {
     @Override
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
         UserInfoTo userInfoTo = threadLocal.get();
-        if (userInfoTo.isTempUser()) {
+        if (!userInfoTo.isTempUser()) {
             Cookie cookie = new Cookie(CartConstant.TEMP_USER_COOKIE_NAME, userInfoTo.getUserKey());
             cookie.setDomain("linmall.com");
             cookie.setMaxAge(CartConstant.TEMP_USER_COOKIE_TIMEOUT);
             response.addCookie(cookie);
         }
-        HandlerInterceptor.super.postHandle(request, response, handler, modelAndView);
     }
 }

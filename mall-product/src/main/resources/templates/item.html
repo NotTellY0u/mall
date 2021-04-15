@@ -626,7 +626,7 @@
 
                 <div class="box-btns clear">
                     <div class="box-btns-one">
-                        <input type="text" name="" id="" value="1"/>
+                        <input id="numInput" name="" type="text" value="1"/>
                         <div class="box-btns-one1">
 
                             <div>
@@ -643,8 +643,9 @@
                         </div>
                     </div>
                     <div class="box-btns-two">
-                        <a href="/static/item/../商品分类\index.html">
-                            立即预约
+                        <a href="http://cart.linmall.com/addToCart" id="addToCartA"
+                           th:attr="skuId=${item.skuInfoEntity.skuId}">
+                            加入购物车
                         </a>
                     </div>
                     <div class="box-btns-three">
@@ -1330,11 +1331,18 @@
         // 3.取出他们的交集，得到skuId
         console.log(filterElement)
         // 4.跳转
-        location.href = "http://item.linmall.com/"+filterElement[0]+".html"
+        location.href = "http://item.linmall.com/" + filterElement[0] + ".html"
     })
-    $(function (){
-        $(".sku_attr_value").parent().css({"border":"solid 1px #CCC"})
-        $("a[class='sku_attr_value checked']").parent().css({"border":"solid 1px red"})
+    $(function () {
+        $(".sku_attr_value").parent().css({"border": "solid 1px #CCC"})
+        $("a[class='sku_attr_value checked']").parent().css({"border": "solid 1px red"})
+    })
+
+    $("#addToCartA").click(function () {
+        let num = $("#numInput").val()
+        let skuId = $(this).attr("skuId")
+        location.href = "http://cart.linmall.com/addToCart?skuId=" + skuId + "&num=" + num
+        return false;
     })
 
 </script>
