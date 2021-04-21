@@ -1,7 +1,7 @@
 package me.lin.mall.cart.controller;
 
-import me.lin.mall.cart.interceptor.CartInterceptor;
 import me.lin.mall.cart.service.CartService;
+import me.lin.mall.cart.vo.Cart;
 import me.lin.mall.cart.vo.CartItem;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -36,9 +36,10 @@ public class CartController {
     }
 
     @GetMapping("/cart.html")
-    public String cartListPage() {
+    public String cartListPage(Model model) throws ExecutionException, InterruptedException {
 
-        CartInterceptor.threadLocal.get();
+        Cart cart = cartService.getCart();
+        model.addAttribute("cart", cart);
 
         return "cartList";
     }
@@ -60,6 +61,7 @@ public class CartController {
 
     /**
      * addFlashAttribute() 将数据放在session里面，可以在页面取出，但是只能取出一次
+     * addAttribute()  将数据放在url后面
      *
      * @param skuId
      * @param model
@@ -73,4 +75,22 @@ public class CartController {
         return "success";
     }
 
+    @GetMapping("/checkItem")
+    public String checkItem(@RequestParam("skuId") Long skuId, @RequestParam("check") Integer check) {
+        cartService.checkItem(skuId, check);
+        return "redirect:http://cart.linmall.com/cart.html";
+    }
+
+    @GetMapping("/countItem")
+    public String countItem(@RequestParam("skuId") Long skuId,
+                            @RequestParam("num") Integer num) {
+        cartService.changeItemCount(skuId, num);
+        return "redirect:http://cart.linmall.com/cart.html";
+    }
+
+    @GetMapping("/deleteItem")
+    public String deleteItem(@RequestParam("skuId") Long skuId) {
+        cartService.deleteItem(skuId);
+        return "redirect:http://cart.linmall.com/cart.html";
+    }
 }

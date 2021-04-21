@@ -10,12 +10,15 @@ spring:
         server-addr: 127.0.0.1:8848
   application:
     name: mall-order
+  rabbitmq:
+    addresses: 10.211.55.6
+    port: 5672
+    virtual-host: /
 
 mybatis-plus:
   mapper-locations: classpath*:/mapper/**/*.xml
   global-config:
     db-config:
       id-type: auto
-
 server:
   port: 9000
