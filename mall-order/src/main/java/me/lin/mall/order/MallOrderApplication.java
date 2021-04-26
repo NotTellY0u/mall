@@ -5,7 +5,6 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 
-
 /**
  * 使用rabbitMQ
  * 1. 引入amqp场景：RabbitAutoConfiguration就会自动生效
