@@ -131,11 +131,12 @@
                 </li>
             </ul>
             <ul class="header_ul_right">
-                <li style="border: 0;">
-                    <a class="aa" href="/static/order/detail/denglu.html">你好，请登录</a>
+                <li>
+                    <a th:if="${session.loginUser!=null}">欢迎：[[${session.loginUser==null?'':session.loginUser.nickname}]]</a>
+                    <a href="http://auth.linmall.com/login.html" th:if="${session.loginUser==null}">欢迎，请登录</a>
                 </li>
                 <li>
-                    <a href="/static/order/detail/javascript:;" style="color: red;">免费注册</a> |
+                    <a class="li_2" href="http://auth.linmall.com/reg.html" th:if="${session.loginUser==null}">免费注册</a>|
                 </li>
                 <li>
                     <a class="aa" href="/static/order/detail/javascript:;">我的订单</a> |

@@ -16,6 +16,11 @@ spring:
     virtual-host: /
   thymeleaf:
     cache: false
+  session:
+    store-type: redis
+  redis:
+    host: 10.211.55.6
+    port: 6379
 
 mybatis-plus:
   mapper-locations: classpath*:/mapper/**/*.xml
@@ -24,3 +29,9 @@ mybatis-plus:
       id-type: auto
 server:
   port: 9000
+
+mall:
+  thread:
+    core-size: 20
+    max-size: 200
+    keep-alive-time: 10

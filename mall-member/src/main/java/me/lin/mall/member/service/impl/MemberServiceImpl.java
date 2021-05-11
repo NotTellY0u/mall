@@ -88,6 +88,7 @@ public class MemberServiceImpl extends ServiceImpl<MemberDao, MemberEntity> impl
         MemberEntity entity = this.baseMapper.selectOne(new QueryWrapper<MemberEntity>().eq("username", loginAcct)
                 .or().eq("mobile", loginAcct));
         if (entity == null) {
+
             return null;
         } else {
             String passwordDb = entity.getPassword();
