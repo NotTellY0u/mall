@@ -5,6 +5,8 @@ import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
+ * 实现无业务逻辑跳转
+ *
  * @Author Fibonacci
  * @Date 2021/3/25 3:57 下午
  * @Version 1.0
