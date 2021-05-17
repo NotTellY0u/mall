@@ -70,9 +70,10 @@ public class Cart {
         // 1. 计算购物总价
         if (items != null && items.size() > 0) {
             for (CartItem item : items) {
-                BigDecimal totalPrice = item.getTotalPrice();
-                amount = amount.add(totalPrice);
-
+                if (item.getCheck()) {
+                    BigDecimal totalPrice = item.getTotalPrice();
+                    amount = amount.add(totalPrice);
+                }
             }
         }
         // 2.减去优惠总价

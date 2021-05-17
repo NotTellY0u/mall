@@ -1,11 +1,9 @@
 package me.lin.mall.member.entity;
 
-import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import lombok.Data;
 
 import java.io.Serializable;
-import java.util.Date;
-import lombok.Data;
 
 /**
  * 会员收货地址
@@ -22,7 +20,6 @@ public class MemberReceiveAddressEntity implements Serializable {
 	/**
 	 * id
 	 */
-	@TableId
 	private Long id;
 	/**
 	 * member_id
