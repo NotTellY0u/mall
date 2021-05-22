@@ -1,20 +1,14 @@
 package me.lin.mall.member.controller;
 
-import java.util.Arrays;
-import java.util.Map;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
-import me.lin.mall.member.entity.MemberReceiveAddressEntity;
-import me.lin.mall.member.service.MemberReceiveAddressService;
 import me.lin.mall.common.utils.PageUtils;
 import me.lin.mall.common.utils.R;
+import me.lin.mall.member.entity.MemberReceiveAddressEntity;
+import me.lin.mall.member.service.MemberReceiveAddressService;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -27,14 +21,23 @@ import me.lin.mall.common.utils.R;
 @RestController
 @RequestMapping("member/memberreceiveaddress")
 public class MemberReceiveAddressController {
-    @Autowired
-    private MemberReceiveAddressService memberReceiveAddressService;
+    private final MemberReceiveAddressService memberReceiveAddressService;
+
+    public MemberReceiveAddressController(MemberReceiveAddressService memberReceiveAddressService) {
+        this.memberReceiveAddressService = memberReceiveAddressService;
+    }
+
+    @GetMapping("/{memberId}/addresses")
+    public List<MemberReceiveAddressEntity> getAddress(@PathVariable Long memberId) {
+        return memberReceiveAddressService.getAddress(memberId);
+
+    }
 
     /**
      * 列表
      */
     @RequestMapping("/list")
-    public R list(@RequestParam Map<String, Object> params){
+    public R list(@RequestParam Map<String, Object> params) {
         PageUtils page = memberReceiveAddressService.queryPage(params);
 
         return R.ok().put("page", page);

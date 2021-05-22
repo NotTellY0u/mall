@@ -3,6 +3,7 @@ package me.lin.mall.cart.service;
 import me.lin.mall.cart.vo.Cart;
 import me.lin.mall.cart.vo.CartItem;
 
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 /**
@@ -58,4 +59,11 @@ public interface CartService {
      * @param skuId 商品id
      */
     void deleteItem(Long skuId);
+
+    /**
+     * 获取用户购物车信息
+     *
+     * @return
+     */
+    List<CartItem> getUserCartItems();
 }
