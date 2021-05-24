@@ -19,10 +19,14 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ThreadPoolExecutor;
 
 
 @Service("orderService")
 public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> implements OrderService {
+
+    final
+    ThreadPoolExecutor threadPoolExecutor;
 
     final
     MemberFeignService memberFeignService;
@@ -30,9 +34,10 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
     final
     CartFeignService cartFeignService;
 
-    public OrderServiceImpl(MemberFeignService memberFeignService, CartFeignService cartFeignService) {
+    public OrderServiceImpl(MemberFeignService memberFeignService, CartFeignService cartFeignService, ThreadPoolExecutor threadPoolExecutor) {
         this.memberFeignService = memberFeignService;
         this.cartFeignService = cartFeignService;
+        this.threadPoolExecutor = threadPoolExecutor;
     }
 
     @Override
