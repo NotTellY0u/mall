@@ -6,6 +6,7 @@ import me.lin.mall.order.entity.OrderEntity;
 import me.lin.mall.order.vo.OrderConfirmVo;
 
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 /**
  * 订单
@@ -23,6 +24,6 @@ public interface OrderService extends IService<OrderEntity> {
      *
      * @return
      */
-    OrderConfirmVo confirmOrder();
+    OrderConfirmVo confirmOrder() throws ExecutionException, InterruptedException;
 }
 

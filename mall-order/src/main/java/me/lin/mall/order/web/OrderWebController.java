@@ -6,6 +6,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
+import java.util.concurrent.ExecutionException;
+
 /**
  * @Author Fibonacci
  * @Date 2021/5/16 4:39 下午
@@ -22,7 +24,7 @@ public class OrderWebController {
     }
 
     @GetMapping("/toTrade")
-    public String toTrade(Model model) {
+    public String toTrade(Model model) throws ExecutionException, InterruptedException {
 
         OrderConfirmVo confirmVo = orderService.confirmOrder();
 

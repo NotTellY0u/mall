@@ -16,9 +16,13 @@ import me.lin.mall.order.vo.MemberAddressVo;
 import me.lin.mall.order.vo.OrderConfirmVo;
 import me.lin.mall.order.vo.OrderItemVo;
 import org.springframework.stereotype.Service;
+import org.springframework.web.context.request.RequestAttributes;
+import org.springframework.web.context.request.RequestContextHolder;
 
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ThreadPoolExecutor;
 
 
@@ -51,23 +55,36 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
     }
 
     @Override
-    public OrderConfirmVo confirmOrder() {
+    public OrderConfirmVo confirmOrder() throws ExecutionException, InterruptedException {
 
         OrderConfirmVo confirmVo = new OrderConfirmVo();
 
         MemberRespVo memberRespVo = LoginUserInterceptor.loginUser.get();
 
-        //1.远程查询所有的收货地址
-        List<MemberAddressVo> address = memberFeignService.getAddress(memberRespVo.getId());
-        confirmVo.setAddress(address);
+        RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
 
-        //2.远程查询购物车中所有选中的购物项
-        List<OrderItemVo> items = cartFeignService.getCurrentUserCartItems();
-        confirmVo.setItems(items);
+        CompletableFuture<Void> getAddressFuture = CompletableFuture.runAsync(() -> {
+            //1.远程查询所有的收货地址
+            RequestContextHolder.setRequestAttributes(requestAttributes);
+            List<MemberAddressVo> address = memberFeignService.getAddress(memberRespVo.getId());
+            RequestContextHolder.setRequestAttributes(requestAttributes);
+            confirmVo.setAddress(address);
+        }, threadPoolExecutor);
 
-        //3.查询用户积分
-        Integer integration = memberRespVo.getIntegration();
-        confirmVo.setIntegration(integration);
+        CompletableFuture<Void> cartFuture = CompletableFuture.runAsync(() -> {
+            //2.远程查询购物车中所有选中的购物项
+            RequestContextHolder.setRequestAttributes(requestAttributes);
+            List<OrderItemVo> items = cartFeignService.getCurrentUserCartItems();
+            confirmVo.setItems(items);
+        }, threadPoolExecutor);
+
+        CompletableFuture<Void> integrationFuture = CompletableFuture.runAsync(() -> {
+            //3.查询用户积分
+            Integer integration = memberRespVo.getIntegration();
+            confirmVo.setIntegration(integration);
+        }, threadPoolExecutor);
+
+        CompletableFuture.allOf(getAddressFuture, cartFuture, integrationFuture).get();
 
         //4.其他数据自动计算
 
