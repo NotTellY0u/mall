@@ -78,13 +78,12 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
             confirmVo.setItems(items);
         }, threadPoolExecutor);
 
-        CompletableFuture<Void> integrationFuture = CompletableFuture.runAsync(() -> {
-            //3.查询用户积分
-            Integer integration = memberRespVo.getIntegration();
-            confirmVo.setIntegration(integration);
-        }, threadPoolExecutor);
 
-        CompletableFuture.allOf(getAddressFuture, cartFuture, integrationFuture).get();
+        Integer integration = memberRespVo.getIntegration();
+        confirmVo.setIntegration(integration);
+
+
+        CompletableFuture.allOf(getAddressFuture, cartFuture).get();
 
         //4.其他数据自动计算
 

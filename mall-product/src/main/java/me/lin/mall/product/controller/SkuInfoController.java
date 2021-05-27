@@ -7,7 +7,6 @@ import me.lin.mall.product.service.SkuInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Map;
 
@@ -27,9 +26,9 @@ public class SkuInfoController {
     private SkuInfoService skuInfoService;
 
     @GetMapping("/{skuId}/price")
-    public BigDecimal getPrice(@PathVariable Long skuId) {
+    public R getPrice(@PathVariable Long skuId) {
         SkuInfoEntity skuInfoEntity = skuInfoService.getById(skuId);
-        return skuInfoEntity.getPrice();
+        return R.ok().setData(skuInfoEntity.getPrice().toString());
     }
 
     /**
