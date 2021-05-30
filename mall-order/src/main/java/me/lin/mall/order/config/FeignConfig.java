@@ -27,12 +27,14 @@ public class FeignConfig {
             public void apply(RequestTemplate requestTemplate) {
                 // RequestContextHolder拿到请求信息
                 ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-                HttpServletRequest request = requestAttributes != null ? requestAttributes.getRequest() : null;
-                // 同步请求头数据，Cookie
-                if (request != null) {
-                    String cookie = request.getHeader("Cookie");
-                    //给新请求同步老请求cookie
-                    requestTemplate.header("Cookie", cookie);
+                if (requestAttributes != null) {
+                    HttpServletRequest request = requestAttributes.getRequest();
+                    // 同步请求头数据，Cookie
+                    if (request != null) {
+                        String cookie = request.getHeader("Cookie");
+                        //给新请求同步老请求cookie
+                        requestTemplate.header("Cookie", cookie);
+                    }
                 }
             }
         };

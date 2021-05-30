@@ -2,6 +2,7 @@ package me.lin.mall.order.vo;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 订单确认页需要的数据
@@ -40,6 +41,16 @@ public class OrderConfirmVo {
      * 订单总额
      */
 //    private BigDecimal total;
+
+    Map<Long, Boolean> stocks;
+
+    public Map<Long, Boolean> getStocks() {
+        return stocks;
+    }
+
+    public void setStocks(Map<Long, Boolean> stocks) {
+        this.stocks = stocks;
+    }
 
     /**
      * 应付总额

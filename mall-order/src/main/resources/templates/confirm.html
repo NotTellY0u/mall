@@ -422,7 +422,7 @@
             <img class="yun" th:src="${item.image}"/>
             <div class="mi">
                 <p>[[${item.title}]]<span style="color: red;"> ￥ [[${#numbers.formatDecimal(item.price,1,2)}]]</span>
-                    <span> x[[${item.count}]] </span> <span>[[${item.hasStock?"有货":"无货"}]]</span>
+                    <span> x[[${item.count}]] </span> <span>[[${orderConfirmData.stocks[item.skuId]?"有货":"无货"}]]</span>
                 </p>
                 <p>电提醒 久坐提醒 LED显示器 时间显示 防水记 <span>0.095kg</span></p>
                 <p class="tui-1"><img src="/static/order/confirm/img/i_07.png"/>支持7天无理由退货</p>
