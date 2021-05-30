@@ -58,6 +58,16 @@ public class OrderConfirmVo {
         return sum;
     }
 
+    public Integer getCount() {
+        Integer i = 0;
+        if (items != null) {
+            for (OrderItemVo item : items) {
+                i += item.getCount();
+            }
+        }
+        return i;
+    }
+
     public BigDecimal getPayPrice() {
         return getTotal();
     }
