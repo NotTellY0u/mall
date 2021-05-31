@@ -1,20 +1,14 @@
 package me.lin.mall.ware.controller;
 
-import java.util.Arrays;
-import java.util.Map;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
-import me.lin.mall.ware.entity.WareInfoEntity;
-import me.lin.mall.ware.service.WareInfoService;
 import me.lin.mall.common.utils.PageUtils;
 import me.lin.mall.common.utils.R;
+import me.lin.mall.ware.entity.WareInfoEntity;
+import me.lin.mall.ware.service.WareInfoService;
+import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.Map;
 
 
 /**
@@ -27,14 +21,24 @@ import me.lin.mall.common.utils.R;
 @RestController
 @RequestMapping("ware/wareinfo")
 public class WareInfoController {
-    @Autowired
-    private WareInfoService wareInfoService;
+    private final WareInfoService wareInfoService;
+
+    public WareInfoController(WareInfoService wareInfoService) {
+        this.wareInfoService = wareInfoService;
+    }
+
+
+    @GetMapping("/fare")
+    public R getFare(@RequestParam("addrId") Long addrId) {
+        BigDecimal fare = wareInfoService.getFare(addrId);
+        return R.ok().setData(fare);
+    }
 
     /**
      * 列表
      */
     @RequestMapping("/list")
-    public R list(@RequestParam Map<String, Object> params){
+    public R list(@RequestParam Map<String, Object> params) {
         PageUtils page = wareInfoService.queryPage(params);
 
         return R.ok().put("page", page);
