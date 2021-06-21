@@ -8,6 +8,7 @@ import me.lin.mall.common.utils.PageUtils;
 import me.lin.mall.common.utils.Query;
 import me.lin.mall.common.utils.R;
 import me.lin.mall.common.vo.MemberRespVo;
+import me.lin.mall.order.constant.OrderConstant;
 import me.lin.mall.order.dao.OrderDao;
 import me.lin.mall.order.entity.OrderEntity;
 import me.lin.mall.order.feign.CartFeignService;
@@ -19,15 +20,18 @@ import me.lin.mall.order.vo.MemberAddressVo;
 import me.lin.mall.order.vo.OrderConfirmVo;
 import me.lin.mall.order.vo.OrderItemVo;
 import me.lin.mall.order.vo.SkuHasStockVo;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 
@@ -46,11 +50,15 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
     final
     WmsFeignService wmsFeignService;
 
-    public OrderServiceImpl(MemberFeignService memberFeignService, CartFeignService cartFeignService, ThreadPoolExecutor threadPoolExecutor, WmsFeignService wmsFeignService) {
+    final
+    StringRedisTemplate redisTemplate;
+
+    public OrderServiceImpl(MemberFeignService memberFeignService, CartFeignService cartFeignService, ThreadPoolExecutor threadPoolExecutor, WmsFeignService wmsFeignService,StringRedisTemplate redisTemplate) {
         this.memberFeignService = memberFeignService;
         this.cartFeignService = cartFeignService;
         this.threadPoolExecutor = threadPoolExecutor;
         this.wmsFeignService = wmsFeignService;
+        this.redisTemplate = redisTemplate;
     }
 
     @Override
@@ -101,9 +109,14 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
         Integer integration = memberRespVo.getIntegration();
         confirmVo.setIntegration(integration);
 
+        //防重令牌
+        String token = UUID.randomUUID().toString().replace("-", "");
+        redisTemplate.opsForValue().set(OrderConstant.USER_ORDER_TOKEN_PREFIX+memberRespVo.getId(),token,30, TimeUnit.MINUTES);
+        confirmVo.setOrderToken(token);
+
+
 
         CompletableFuture.allOf(getAddressFuture, cartFuture).get();
-
         //4.其他数据自动计算
 
         return confirmVo;

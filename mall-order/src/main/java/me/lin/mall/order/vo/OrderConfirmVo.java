@@ -40,6 +40,16 @@ public class OrderConfirmVo {
     /**
      * 订单总额
      */
+
+    private String OrderToken;
+
+    public String getOrderToken() {
+        return orderToken;
+    }
+
+    public void setOrderToken(String orderToken) {
+        this.orderToken = orderToken;
+    }
 //    private BigDecimal total;
 
     Map<Long, Boolean> stocks;
