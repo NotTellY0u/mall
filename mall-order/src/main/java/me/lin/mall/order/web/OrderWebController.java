@@ -5,6 +5,7 @@ import me.lin.mall.order.vo.OrderConfirmVo;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 
 import java.util.concurrent.ExecutionException;
 
@@ -32,4 +33,11 @@ public class OrderWebController {
 
         return "confirm";
     }
+
+    @PostMapping("/submitOrder")
+    public String submitOrder(){
+        //TODO
+        return null;
+    }
+
 }
