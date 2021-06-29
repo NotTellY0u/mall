@@ -2,6 +2,7 @@ package me.lin.mall.order.web;
 
 import me.lin.mall.order.service.OrderService;
 import me.lin.mall.order.vo.OrderConfirmVo;
+import me.lin.mall.order.vo.OrderSubmitVo;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -35,7 +36,7 @@ public class OrderWebController {
     }
 
     @PostMapping("/submitOrder")
-    public String submitOrder(){
+    public String submitOrder(OrderSubmitVo vo){
         //TODO
         return null;
     }
