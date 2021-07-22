@@ -490,8 +490,12 @@
         </p>
         <p class="yfze_b">寄送至： 北京 朝阳区 三环到四环之间 朝阳北路复兴国际大厦23层麦田房产 IT-中心研发二部 收货人：赵存权 188****5052</p>
     </div>
+    <form action="http://order.linmall.com/submitOrder" method="post">
+        <input id="addrIdInput" type="hidden" name="addrId">
+        <input id="payPriceInput" type="hidden" name="payPrice">
     <input name="orderToken" type="hidden" th:value="${orderConfirmData.orderToken}">
-    <button class="tijiao">提交订单</button>
+    <button class="tijiao" type="submit">提交订单</button>
+    </form>
 </div>
 </div>
 
@@ -745,12 +749,19 @@
     })
 
     function getFare(addrId) {
-        $.get("http://linmall.com/api/ware/wareinfo?addrId=" + addrId, function (data) {
+        console.log(addrId)
+        //给表单回填选择的地址
+        $("#addrIdInput").val(addrId)
+        $("payPriceInput").val(addrId)
+        $.get("http://linmall.com/api/ware/wareinfo/fare?addrId=" + addrId, function (data) {
             console.log(data)
             //fareEle
             $("#fareEle").text(data.data)
             let total = [[${orderConfirmData.total}]]
-            $("#payPriceEle").text(total * 1 + data.data * 1)
+            let payPrice = total * 1 + data.data * 1
+            $("#payPriceEle").text(payPrice)
+            $("payPriceInput").val(payPrice)
+            console.log(payPrice)
         })
     }
 
