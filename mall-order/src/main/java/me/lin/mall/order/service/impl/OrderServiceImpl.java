@@ -83,6 +83,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
         CompletableFuture<Void> getAddressFuture = CompletableFuture.runAsync(() -> {
             //1.远程查询所有的收货地址
             RequestContextHolder.setRequestAttributes(requestAttributes);
+            System.out.println(memberRespVo.getId());
             List<MemberAddressVo> address = memberFeignService.getAddress(memberRespVo.getId());
             RequestContextHolder.setRequestAttributes(requestAttributes);
             confirmVo.setAddress(address);

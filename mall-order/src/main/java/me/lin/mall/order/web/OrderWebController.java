@@ -41,6 +41,7 @@ public class OrderWebController {
         //下单：去创建订单，验令牌，验价格，锁库存。。。
         //下单成功来到支付选择页
         //下单失败回到订单确认页重新确认订单信息
+        System.out.println("订单提交数据..."+vo);
         return null;
     }
 

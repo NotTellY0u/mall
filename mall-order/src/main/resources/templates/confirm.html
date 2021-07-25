@@ -352,7 +352,7 @@
 
     <!--地址-->
     <div class="top-3 addr-item" th:each="addr:${orderConfirmData.address}">
-        <p th:attr="def=${addr.defaultStatus},attrId=${addr.id}">[[${addr.name}]]</p>
+        <p th:attr="def=${addr.defaultStatus},addrId=${addr.id}">[[${addr.name}]][[${addr.id}]]</p>
         <span>[[${addr.name}]]  [[${addr.province}]] [[${addr.detailAddress}]] [[${addr.phone}]]</span>
     </div>
     <p class="p2">更多地址︾</p>
@@ -464,7 +464,7 @@
         <p class="qian_y">
             <span>[[${orderConfirmData.count}]]</span>
             <span>件商品，总商品金额：</span>
-            <span class="rmb">￥<b id="payPriceEle"></b> [[${#numbers.formatDecimal(orderConfirmData.total,1,2)}]]</span>
+            <span class="rmb">￥</b> [[${#numbers.formatDecimal(orderConfirmData.total,1,2)}]]</span>
         </p>
         <p class="qian_y">
             <span>返现：</span>
@@ -472,7 +472,7 @@
         </p>
         <p class="qian_y">
             <span>运费： </span>
-            <span class="rmb"> &nbsp ￥0.00 <b id="fareEle"></b></span>
+            <span class="rmb"> &nbsp ￥ <b id="fareEle"></b></span>
         </p>
         <p class="qian_y">
             <span>服务费： </span>
@@ -486,7 +486,7 @@
     </div>
 
     <div class="yfze">
-        <p class="yfze_a"><span class="z">应付总额：</span><span class="hq">￥ [[${#numbers.formatDecimal(orderConfirmData.payPrice,1,2)}]]</span>
+        <p class="yfze_a"><span class="z">应付总额：</span><span class="hq">￥ <b id="payPriceEle">[[${#numbers.formatDecimal(orderConfirmData.payPrice,1,2)}]]</span>
         </p>
         <p class="yfze_b">寄送至： 北京 朝阳区 三环到四环之间 朝阳北路复兴国际大厦23层麦田房产 IT-中心研发二部 收货人：赵存权 188****5052</p>
     </div>
@@ -752,7 +752,6 @@
         console.log(addrId)
         //给表单回填选择的地址
         $("#addrIdInput").val(addrId)
-        $("payPriceInput").val(addrId)
         $.get("http://linmall.com/api/ware/wareinfo/fare?addrId=" + addrId, function (data) {
             console.log(data)
             //fareEle
@@ -760,7 +759,7 @@
             let total = [[${orderConfirmData.total}]]
             let payPrice = total * 1 + data.data * 1
             $("#payPriceEle").text(payPrice)
-            $("payPriceInput").val(payPrice)
+            $("#payPriceInput").val(payPrice)
             console.log(payPrice)
         })
     }
