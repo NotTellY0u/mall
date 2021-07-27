@@ -3,6 +3,7 @@ package me.lin.mall.order.web;
 import me.lin.mall.order.service.OrderService;
 import me.lin.mall.order.vo.OrderConfirmVo;
 import me.lin.mall.order.vo.OrderSubmitVo;
+import me.lin.mall.order.vo.SubmitOrderResponseVo;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -38,11 +39,17 @@ public class OrderWebController {
     @PostMapping("/submitOrder")
     public String submitOrder(OrderSubmitVo vo){
         //TODO
-        //下单：去创建订单，验令牌，验价格，锁库存。。。
+        SubmitOrderResponseVo responseVo = orderService.submitOrder(vo);
+
         //下单成功来到支付选择页
         //下单失败回到订单确认页重新确认订单信息
         System.out.println("订单提交数据..."+vo);
-        return null;
+        if(responseVo.getCode() == 0){
+            //成功
+            return "pay";
+        }else {
+            return "redirect:http://order.linmall.com/toTrade";
+        }
     }
 
 }
