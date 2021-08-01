@@ -3,6 +3,7 @@ package me.lin.mall.product.controller;
 import java.util.Arrays;
 import java.util.Map;
 
+import me.lin.mall.product.entity.SpuInfoDescEntity;
 import me.lin.mall.product.vo.SpuSaveVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -35,6 +36,12 @@ public class SpuInfoController {
         spuInfoService.up(spuId);
 
         return R.ok();
+    }
+
+    @GetMapping("/skuId/{id}")
+    public R getSpuInfoBySkuId(@PathVariable("id") Long skuId){
+        SpuInfoEntity entity = spuInfoService.getSpuInfoBySkuId();
+        return R.ok().setData(entity);
     }
 
     /**

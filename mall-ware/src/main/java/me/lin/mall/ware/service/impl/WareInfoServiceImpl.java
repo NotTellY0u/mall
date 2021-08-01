@@ -11,6 +11,7 @@ import me.lin.mall.ware.dao.WareInfoDao;
 import me.lin.mall.ware.entity.WareInfoEntity;
 import me.lin.mall.ware.feign.MemberFeignService;
 import me.lin.mall.ware.service.WareInfoService;
+import me.lin.mall.ware.vo.FareVo;
 import me.lin.mall.ware.vo.MemberAddressVo;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
@@ -47,16 +48,19 @@ public class WareInfoServiceImpl extends ServiceImpl<WareInfoDao, WareInfoEntity
     }
 
     @Override
-    public BigDecimal getFare(Long addrId) {
+    public FareVo getFare(Long addrId) {
+        FareVo fareVo = new FareVo();
         R info = memberFeignService.info(addrId);
-        MemberAddressVo data = info.getData("memberReceiveAddress", new TypeReference<MemberAddressVo>() {
-        });
-        if (data != null) {
-            String phone = data.getPhone();
-            String substring = phone.substring(phone.length() - 1);
-            return new BigDecimal(substring);
+        if (info.getCode() == 0) {
+            MemberAddressVo address = info.getData("memberReceiveAddress", new TypeReference<MemberAddressVo>() {
+            });
+            fareVo.setAddress(address);
+            String phone = address.getPhone();
+            //取电话号的最后两位作为邮费
+            String fare = phone.substring(phone.length() - 2, phone.length());
+            fareVo.setFare(new BigDecimal(fare));
         }
-        return null;
+        return fareVo;
     }
 
 }

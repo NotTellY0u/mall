@@ -4,6 +4,7 @@ import me.lin.mall.common.utils.PageUtils;
 import me.lin.mall.common.utils.R;
 import me.lin.mall.ware.entity.WareInfoEntity;
 import me.lin.mall.ware.service.WareInfoService;
+import me.lin.mall.ware.vo.FareVo;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
@@ -30,7 +31,7 @@ public class WareInfoController {
 
     @GetMapping("/fare")
     public R getFare(@RequestParam("addrId") Long addrId) {
-        BigDecimal fare = wareInfoService.getFare(addrId);
+        FareVo fare = wareInfoService.getFare(addrId);
         return R.ok().setData(fare);
     }
 
