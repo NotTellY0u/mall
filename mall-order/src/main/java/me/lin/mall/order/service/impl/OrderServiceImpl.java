@@ -15,11 +15,13 @@ import me.lin.mall.order.entity.OrderEntity;
 import me.lin.mall.order.entity.OrderItemEntity;
 import me.lin.mall.order.feign.CartFeignService;
 import me.lin.mall.order.feign.MemberFeignService;
+import me.lin.mall.order.feign.ProductFeignService;
 import me.lin.mall.order.feign.WmsFeignService;
 import me.lin.mall.order.interceptor.LoginUserInterceptor;
 import me.lin.mall.order.service.OrderService;
 import me.lin.mall.order.to.OrderCreateTo;
 import me.lin.mall.order.vo.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.stereotype.Service;
@@ -53,15 +55,19 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
     WmsFeignService wmsFeignService;
 
     final
+    ProductFeignService productFeignService;
+
+    final
     StringRedisTemplate redisTemplate;
 
     private ThreadLocal<OrderSubmitVo> confirmVoThreadLocal = new ThreadLocal<>();
-    public OrderServiceImpl(MemberFeignService memberFeignService, CartFeignService cartFeignService, ThreadPoolExecutor threadPoolExecutor, WmsFeignService wmsFeignService,StringRedisTemplate redisTemplate) {
+    public OrderServiceImpl(MemberFeignService memberFeignService, CartFeignService cartFeignService, ThreadPoolExecutor threadPoolExecutor, WmsFeignService wmsFeignService, StringRedisTemplate redisTemplate, ProductFeignService productFeignService) {
         this.memberFeignService = memberFeignService;
         this.cartFeignService = cartFeignService;
         this.threadPoolExecutor = threadPoolExecutor;
         this.wmsFeignService = wmsFeignService;
         this.redisTemplate = redisTemplate;
+        this.productFeignService = productFeignService;
     }
 
     @Override
@@ -133,7 +139,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
 
         MemberRespVo memberRespVo = LoginUserInterceptor.loginUser.get();
 
-        confirmVoThreadLocal.set();
+        confirmVoThreadLocal.set(vo);
         // 1.验证令牌【令牌的对比和删除必须保证原子性】
         String script= "if redis.call('get', KEYS[1]) == ARGV[1] then return redis.call('del', KEYS[1]) else return 0 end";
         String orderToken = vo.getOrderToken();
@@ -149,17 +155,9 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
             } else {
                 //令牌验证成功
                 //下单：去创建订单，验令牌，验价格，锁库存。。。
-                OrderCreateTo order = createOrder(vo.getAddrId());
+                OrderCreateTo order = createOrder();
 
             }
-/*        String redisToken = redisTemplate.opsForValue().get(OrderConstant.USER_ORDER_TOKEN_PREFIX + memberRespVo.getId());
-        if(Objects.equals(orderToken,redisToken)){
-            //令牌验证通过
-            redisTemplate.delete(OrderConstant.USER_ORDER_TOKEN_PREFIX + memberRespVo.getId());
-        }else {
-            //令牌验证不通过
-
-        }*/
         }
         return  null;
     }
@@ -175,9 +173,19 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
         // 2. 获取所有订单项
         List<OrderItemEntity> itemEntities = buildOrderItems(orderSn);
 
-        // 3. 验价
+        // 3. 计算相关价格
+        computePrice(orderEntity,itemEntities);
 
         return orderCreateTo;
+    }
+
+    private void computePrice(OrderEntity orderEntity, List<OrderItemEntity> itemEntities) {
+        // 1.订单价格相关
+        BigDecimal total = new BigDecimal("0.0");
+        for(OrderItemEntity entity : itemEntities){
+            BigDecimal skuPrice = entity.getSkuPrice().multiply(new BigDecimal(entity.getSkuQuantity().toString()));
+
+        }
     }
 
     private OrderEntity buildOrder(String orderSn) {
@@ -213,10 +221,11 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
         List<OrderItemVo> currentUserCartItems = cartFeignService.getCurrentUserCartItems();
 
         if(currentUserCartItems != null && currentUserCartItems.size() > 0){
-            List<OrderItemEntity> collect = currentUserCartItems.stream().map(cartItem -> {
-                OrderItemEntity itemEntity =buildOrderItem(cartItem);;
-                itemEntity.setOrderSn(orderSn);
-
+            return currentUserCartItems.stream().map(cartItem -> {
+                OrderItemEntity itemEntity = buildOrderItem(cartItem);
+                ;
+                Objects.requireNonNull(itemEntity).setOrderSn(orderSn);
+//                itemEntity.setIntegrationAmount();
                 return itemEntity;
             }).collect(Collectors.toList());
         }
@@ -235,7 +244,13 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
 
         //2.商品的spu信息
         Long skuId = itemEntity.getSkuId();
-
+        R r = productFeignService.getSpuInfoBySkuId(skuId);
+        SpuInfoVo data = r.getData(new TypeReference<SpuInfoVo>() {
+        });
+        itemEntity.setSpuId(data.getId());
+        itemEntity.setSpuBrand(data.getBrandId().toString());
+        itemEntity.setSpuName(data.getSpuName());
+        itemEntity.setCategoryId(data.getCatalogId());
         //3.商品的sku信息
         itemEntity.setSkuId(cartItem.getSkuId());
         itemEntity.setSkuName(cartItem.getTitle());
