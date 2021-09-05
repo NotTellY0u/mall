@@ -60,7 +60,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
     final
     StringRedisTemplate redisTemplate;
 
-    private ThreadLocal<OrderSubmitVo> confirmVoThreadLocal = new ThreadLocal<>();
+    private final ThreadLocal<OrderSubmitVo> confirmVoThreadLocal = new ThreadLocal<>();
     public OrderServiceImpl(MemberFeignService memberFeignService, CartFeignService cartFeignService, ThreadPoolExecutor threadPoolExecutor, WmsFeignService wmsFeignService, StringRedisTemplate redisTemplate, ProductFeignService productFeignService) {
         this.memberFeignService = memberFeignService;
         this.cartFeignService = cartFeignService;
@@ -159,7 +159,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
 
             }
         }
-        return  null;
+        return  responseVo;
     }
 
     private OrderCreateTo createOrder(){
@@ -174,7 +174,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
         List<OrderItemEntity> itemEntities = buildOrderItems(orderSn);
 
         // 3. 计算相关价格
-        computePrice(orderEntity,itemEntities);
+        computePrice(orderEntity, Objects.requireNonNull(itemEntities));
 
         return orderCreateTo;
     }
@@ -183,7 +183,6 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
         // 1.订单价格相关
         BigDecimal total = new BigDecimal("0.0");
         for(OrderItemEntity entity : itemEntities){
-            BigDecimal skuPrice = entity.getSkuPrice().multiply(new BigDecimal(entity.getSkuQuantity().toString()));
 
         }
     }
@@ -193,6 +192,8 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
         entity.setOrderSn(orderSn);
         // 获取收货地址信息
         OrderSubmitVo orderSubmitVo = confirmVoThreadLocal.get();
+
+        confirmVoThreadLocal.remove();
         // 获取地址信息
         R fare = wmsFeignService.getFare(orderSubmitVo.getAddrId());
         FareVo fareResp = fare.getData(new TypeReference<FareVo>() {
@@ -264,6 +265,16 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
         //5.积分信息
         itemEntity.setGiftGrowth(cartItem.getPrice().intValue());
         itemEntity.setGiftIntegration(cartItem.getPrice().intValue());
-        return null;
+
+        // 6.订单项的价格信息
+        itemEntity.setPromotionAmount(new BigDecimal("0"));
+        itemEntity.setCouponAmount(new BigDecimal("0"));
+        itemEntity.setIntegrationAmount(new BigDecimal("0"));
+        //当前订单项的实际金额
+        BigDecimal origin = itemEntity.getSkuPrice().multiply(new BigDecimal(itemEntity.getSkuQuantity().toString()));
+        BigDecimal decimal = origin.subtract(itemEntity.getCouponAmount()).subtract(itemEntity.getPromotionAmount()).subtract(itemEntity.getIntegrationAmount());
+        itemEntity.setRealAmount(decimal);
+
+        return itemEntity;
     }
 }
