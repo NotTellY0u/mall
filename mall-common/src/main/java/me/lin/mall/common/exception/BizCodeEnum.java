@@ -12,6 +12,7 @@ public enum BizCodeEnum {
     PRODUCT_UP_EXCEPTION(11000, "商品上架异常"),
     USER_EXIST_EXCEPTION(150001, "用户已存在"),
     PHONE_EXIST_EXCEPTION(150002, "用户已存在"),
+    NO_STOCK_EXCEPTION(21000, "商品库存不足"),
     LOGINACCT_PASSWORD_INVAILD_EXCEPTION(15003, "用户名或密码错误");
 
 
