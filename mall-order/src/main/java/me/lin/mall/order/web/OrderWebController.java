@@ -37,7 +37,7 @@ public class OrderWebController {
     }
 
     @PostMapping("/submitOrder")
-    public String submitOrder(OrderSubmitVo vo){
+    public String submitOrder(OrderSubmitVo vo,Model model){
         //TODO
         SubmitOrderResponseVo responseVo = orderService.submitOrder(vo);
 
@@ -45,6 +45,7 @@ public class OrderWebController {
         //下单失败回到订单确认页重新确认订单信息
         System.out.println("订单提交数据..."+vo);
         if(responseVo.getCode() == 0){
+            model.addAttribute("submitOrderResp",responseVo);
             //成功
             return "pay";
         }else {
