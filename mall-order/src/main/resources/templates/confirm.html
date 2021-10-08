@@ -342,7 +342,7 @@
 </div>
 
 <!--主体部分-->
-<p class="p1">填写并核对订单信息</p>
+<p class="p1">填写并核对订单信息  <span style="color: red"  th:if="${msg!=null}" th:text="${msg}"></span> </p>
 <div class="section">
     <!--收货人信息-->
     <div class="top-2">
@@ -486,7 +486,7 @@
     </div>
 
     <div class="yfze">
-        <p class="yfze_a"><span class="z">应付总额：</span><span class="hq">￥ <b id="payPriceEle">[[${#numbers.formatDecimal(orderConfirmData.payPrice,1,2)}]]</span>
+        <p class="yfze_a"><span class="z">应付总额：</span><span class="hq">￥ <b id="payPriceEle">[[${#numbers.formatDecimal(orderConfirmData.payPrice,1,2)}]]</b></span>
         </p>
         <p class="yfze_b">寄送至： 北京 朝阳区 三环到四环之间 朝阳北路复兴国际大厦23层麦田房产 IT-中心研发二部 收货人：赵存权 188****5052</p>
     </div>
@@ -753,11 +753,11 @@
         //给表单回填选择的地址
         $("#addrIdInput").val(addrId)
         $.get("http://linmall.com/api/ware/wareinfo/fare?addrId=" + addrId, function (data) {
-            console.log(data)
             //fareEle
-            $("#fareEle").text(data.data)
+            $("#fareEle").text(data.data.fare)
             let total = [[${orderConfirmData.total}]]
-            let payPrice = total * 1 + data.data * 1
+            let payPrice = total * 1 + data.data.fare * 1
+            console.log("payPrice"+payPrice)
             $("#payPriceEle").text(payPrice)
             $("#payPriceInput").val(payPrice)
             console.log(payPrice)

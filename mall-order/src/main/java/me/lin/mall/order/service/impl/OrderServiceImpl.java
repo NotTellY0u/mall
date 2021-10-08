@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import me.lin.mall.common.exception.NoStockException;
 import me.lin.mall.common.utils.PageUtils;
 import me.lin.mall.common.utils.Query;
 import me.lin.mall.common.utils.R;
@@ -190,11 +191,11 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
                     if(r.getCode() == 0){
                         //库存锁定成功
                         responseVo.setOrderEntity(order.getOrder());
+                        responseVo.setCode(0);
                         return responseVo;
                     }else {
                         //锁定失败
-                        responseVo.setCode(3);
-                        return responseVo;
+                        throw new NoStockException(order.getOrder().getId());
                     }
                 }else {
                     responseVo.setCode(2);
@@ -234,6 +235,8 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
 
         // 3. 计算相关价格
         computePrice(orderEntity, Objects.requireNonNull(itemEntities));
+        orderCreateTo.setOrder(orderEntity);
+        orderCreateTo.setOrderItems(itemEntities);
 
         return orderCreateTo;
     }
@@ -340,7 +343,8 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
         //1.订单信息：订单号
 
         //2.商品的spu信息
-        Long skuId = itemEntity.getSkuId();
+        Long skuId = cartItem.getSkuId();
+        System.out.println("skuId"+skuId);
         R r = productFeignService.getSpuInfoBySkuId(skuId);
         SpuInfoVo data = r.getData(new TypeReference<SpuInfoVo>() {
         });

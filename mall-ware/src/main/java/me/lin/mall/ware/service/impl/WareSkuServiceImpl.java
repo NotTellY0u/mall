@@ -1,31 +1,28 @@
 package me.lin.mall.ware.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import me.lin.mall.common.exception.NoStockException;
+import me.lin.mall.common.utils.PageUtils;
+import me.lin.mall.common.utils.Query;
 import me.lin.mall.common.utils.R;
-import me.lin.mall.ware.exception.NoStockException;
+import me.lin.mall.ware.dao.WareSkuDao;
+import me.lin.mall.ware.entity.WareSkuEntity;
 import me.lin.mall.ware.feign.ProductFeignService;
+import me.lin.mall.ware.service.WareSkuService;
 import me.lin.mall.ware.vo.OrderItemVo;
 import me.lin.mall.ware.vo.SkuHasStockVo;
 import me.lin.mall.ware.vo.WareSkuLockVo;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import me.lin.mall.common.utils.PageUtils;
-import me.lin.mall.common.utils.Query;
-
-import me.lin.mall.ware.dao.WareSkuDao;
-import me.lin.mall.ware.entity.WareSkuEntity;
-import me.lin.mall.ware.service.WareSkuService;
-
-import javax.annotation.Resource;
 
 @Slf4j
 @Service("wareSkuService")

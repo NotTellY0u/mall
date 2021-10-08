@@ -1,4 +1,4 @@
-package me.lin.mall.ware.exception;
+package me.lin.mall.common.exception;
 
 public class NoStockException extends RuntimeException{
 

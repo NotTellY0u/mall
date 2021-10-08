@@ -1,22 +1,20 @@
 package me.lin.mall.ware.controller;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-
 import lombok.extern.slf4j.Slf4j;
 import me.lin.mall.common.exception.BizCodeEnum;
-import me.lin.mall.ware.exception.NoStockException;
-import me.lin.mall.ware.vo.LockStockResultVo;
+import me.lin.mall.common.exception.NoStockException;
+import me.lin.mall.common.utils.PageUtils;
+import me.lin.mall.common.utils.R;
+import me.lin.mall.ware.entity.WareSkuEntity;
+import me.lin.mall.ware.service.WareSkuService;
 import me.lin.mall.ware.vo.SkuHasStockVo;
 import me.lin.mall.ware.vo.WareSkuLockVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import me.lin.mall.ware.entity.WareSkuEntity;
-import me.lin.mall.ware.service.WareSkuService;
-import me.lin.mall.common.utils.PageUtils;
-import me.lin.mall.common.utils.R;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 
 
