@@ -1,14 +1,14 @@
 spring:
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 192.168.77.177:8848
   datasource:
     username: root
     password: root
     #    url: jdbc:mysql://localhost:3306/mall_sms?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
     url: jdbc:mysql://192.168.77.177:3306/mall_sms
     driver-class-name: com.mysql.cj.jdbc.Driver
-  cloud:
-    nacos:
-      discovery:
-        server-addr: 127.0.0.1:8848
   application:
     name: mall-coupon
 mybatis-plus:

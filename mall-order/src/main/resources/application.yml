@@ -7,13 +7,13 @@ spring:
   cloud:
     nacos:
       discovery:
-        server-addr: 127.0.0.1:8848
+        server-addr: 192.168.77.177:8848
   application:
     name: mall-order
-  rabbitmq:
-    addresses: 192.168.77.177
-    port: 5672
-    virtual-host: /
+#  rabbitmq:
+#    addresses: 192.168.77.177
+#    port: 5672
+#    virtual-host: /
   thymeleaf:
     cache: false
   session:
