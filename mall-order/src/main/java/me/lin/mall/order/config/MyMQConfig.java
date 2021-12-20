@@ -1,18 +1,34 @@
 package me.lin.mall.order.config;
 
-import org.springframework.amqp.core.Binding;
-import org.springframework.amqp.core.Exchange;
-import org.springframework.amqp.core.Queue;
-import org.springframework.amqp.core.TopicExchange;
-import org.springframework.amqp.rabbit.annotation.QueueBinding;
+import com.rabbitmq.client.Channel;
+import me.lin.mall.order.entity.OrderEntity;
+import org.springframework.amqp.core.*;
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.io.IOException;
 import java.util.HashMap;
 
 @Configuration
 public class MyMQConfig {
 
+    @RabbitListener(queues = "order.release.order.queue")
+    public void listener(OrderEntity entity, Channel channel, Message message){
+        System.out.println("收到过期消息准备关闭订单"+entity.getOrderSn());
+        try {
+            channel.basicAck(message.getMessageProperties().getDeliveryTag(),false);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    /**
+     * 容器中的bingding，Queue，Exchange都会自动创建（RabbitMQ没有的情况下）
+     * RabbitMQ只要有。@Bean声明属性发生变化也不会覆盖
+     * @return
+     */
 
     @Bean
     public Queue orderDelayQueue(){

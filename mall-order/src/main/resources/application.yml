@@ -10,10 +10,19 @@ spring:
         server-addr: 192.168.77.177:8848
   application:
     name: mall-order
-#  rabbitmq:
-#    addresses: 192.168.77.177
-#    port: 5672
-#    virtual-host: /
+  rabbitmq:
+    addresses: 192.168.77.177
+    port: 5672
+    virtual-host: /
+    username: admin
+    password: admin
+    publisher-confirms: true
+    publisher-returns: true
+    template:
+      mandatory: true
+    listener:
+      simple:
+        acknowledge-mode: manual
   thymeleaf:
     cache: false
   session:
