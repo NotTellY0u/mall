@@ -6,18 +6,25 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import me.lin.mall.common.exception.NoStockException;
+import me.lin.mall.common.to.mq.StockLockedTo;
 import me.lin.mall.common.utils.PageUtils;
 import me.lin.mall.common.utils.Query;
 import me.lin.mall.common.utils.R;
 import me.lin.mall.ware.dao.WareSkuDao;
+import me.lin.mall.ware.entity.WareOrderTaskDetailEntity;
+import me.lin.mall.ware.entity.WareOrderTaskEntity;
 import me.lin.mall.ware.entity.WareSkuEntity;
 import me.lin.mall.ware.feign.ProductFeignService;
+import me.lin.mall.ware.service.WareOrderTaskDetailService;
+import me.lin.mall.ware.service.WareOrderTaskService;
 import me.lin.mall.ware.service.WareSkuService;
 import me.lin.mall.ware.vo.OrderItemVo;
 import me.lin.mall.ware.vo.SkuHasStockVo;
 import me.lin.mall.ware.vo.WareSkuLockVo;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -33,6 +40,15 @@ public class WareSkuServiceImpl extends ServiceImpl<WareSkuDao, WareSkuEntity> i
 
     @Resource
     ProductFeignService productFeignService;
+
+    @Resource
+    RabbitTemplate rabbitTemplate;
+
+    @Resource
+    WareOrderTaskService orderTaskService;
+
+    @Resource
+    WareOrderTaskDetailService orderTaskDetailService;
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
@@ -99,8 +115,25 @@ public class WareSkuServiceImpl extends ServiceImpl<WareSkuDao, WareSkuEntity> i
         return collect;
     }
 
+    /**
+     * 为某个订单锁定库存
+     * rollbackFor=NoStockException.class
+     * 默认只要是运行时异常都回滚
+     * @param vo 订单信息
+     *
+     * 解锁库存场景
+     * 1)、下订单成功，订单过期没有支付被系统自动取消、被用户手动取消。都要解锁
+     * 2)、下订单成功，库存锁定成功，接下来的业务调用失败，导致订单回滚，之前锁定的库存就要自动就锁
+     *
+     * @return
+     */
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public boolean orderLockStock(WareSkuLockVo vo) {
+
+        WareOrderTaskEntity taskEntity = new WareOrderTaskEntity();
+        taskEntity.setOrderSn(vo.getOrderSn());
+        orderTaskService.save(taskEntity);
 
         List<OrderItemVo> locks = vo.getLocks();
 
@@ -127,6 +160,12 @@ public class WareSkuServiceImpl extends ServiceImpl<WareSkuDao, WareSkuEntity> i
                 Long count = wareSkuDao.lockSkuStock(skuId, wareId,skuWareHasStock.getNum());
                 if( count == 1){
                     skuStocked = true;
+                    WareOrderTaskDetailEntity taskDetailEntity = new WareOrderTaskDetailEntity(null,skuId,"",skuWareHasStock.getNum(),taskEntity.getId(),wareId,1);
+                    orderTaskDetailService.save(taskDetailEntity);
+                    StockLockedTo stockLockedTo = new StockLockedTo();
+                    stockLockedTo.setId(taskEntity.getId());
+                    stockLockedTo.setDetailId(taskDetailEntity.getId());
+                    rabbitTemplate.convertAndSend("stock-event-exchange","stock.lockd",stockLockedTo);
                     break;
                 }else{
                     //当前仓库锁失败，重试下一个仓库

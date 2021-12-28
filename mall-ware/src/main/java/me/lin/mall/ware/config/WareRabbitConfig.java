@@ -30,6 +30,11 @@ public class WareRabbitConfig {
         return new Queue("stock.release.stock.queue",true,false,false);
     }
 
+    @RabbitListener(queues = "stock.release.stock.queue")
+    public void handle(Message message){
+
+    }
+
     @Bean
     public Queue stockDelayQueue(){
         Map<String, Object> args = new HashMap<>();
