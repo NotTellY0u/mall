@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import me.lin.mall.common.exception.NoStockException;
+import me.lin.mall.common.to.mq.StockDetailTo;
 import me.lin.mall.common.to.mq.StockLockedTo;
 import me.lin.mall.common.utils.PageUtils;
 import me.lin.mall.common.utils.Query;
@@ -23,6 +24,7 @@ import me.lin.mall.ware.vo.SkuHasStockVo;
 import me.lin.mall.ware.vo.WareSkuLockVo;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -156,15 +158,22 @@ public class WareSkuServiceImpl extends ServiceImpl<WareSkuDao, WareSkuEntity> i
             if (wareIds == null || wareIds.size() == 0) {
                 throw new NoStockException(skuId);
             }
+            // 如果每一个商品都锁定成功，将当前商品锁定了几件的工作单记录发给MQ
+            // 锁定失败，前面保存的工作单信息就回滚了。发送出去的消息，即使要解锁记录，由于去数据库查不到id，所以就不用解锁
             for (Long wareId : wareIds) {
+                // 成功就返回1，否则就是0
                 Long count = wareSkuDao.lockSkuStock(skuId, wareId,skuWareHasStock.getNum());
                 if( count == 1){
                     skuStocked = true;
+                    //TODO 告诉MQ库存锁定成功
                     WareOrderTaskDetailEntity taskDetailEntity = new WareOrderTaskDetailEntity(null,skuId,"",skuWareHasStock.getNum(),taskEntity.getId(),wareId,1);
                     orderTaskDetailService.save(taskDetailEntity);
                     StockLockedTo stockLockedTo = new StockLockedTo();
                     stockLockedTo.setId(taskEntity.getId());
-                    stockLockedTo.setDetailId(taskDetailEntity.getId());
+                    StockDetailTo detail = new StockDetailTo();
+                    BeanUtils.copyProperties(taskDetailEntity, detail);
+                    // 只发id不行，防止回滚以后找不到数据
+                    stockLockedTo.setDetail(detail);
                     rabbitTemplate.convertAndSend("stock-event-exchange","stock.lockd",stockLockedTo);
                     break;
                 }else{
