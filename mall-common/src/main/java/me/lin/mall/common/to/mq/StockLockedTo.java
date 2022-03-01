@@ -14,5 +14,5 @@ public class StockLockedTo {
     /**
      * 工作详情的所有id
      */
-    private Long detailId;
+    private StockDetailTo detail;
 }
