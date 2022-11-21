@@ -33,6 +33,10 @@ public class WareSkuController {
     private WareSkuService wareSkuService;
 
 
+    /**
+     * @param vo
+     * @return
+     */
     @PostMapping("/lock/order")
     public R orderLockStock(@RequestBody WareSkuLockVo vo){
         boolean stockResults;

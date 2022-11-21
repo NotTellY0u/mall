@@ -23,6 +23,9 @@ import me.lin.mall.ware.vo.OrderItemVo;
 import me.lin.mall.ware.vo.SkuHasStockVo;
 import me.lin.mall.ware.vo.WareSkuLockVo;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.amqp.core.Message;
+import org.springframework.amqp.rabbit.annotation.RabbitHandler;
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -34,6 +37,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Slf4j
+@RabbitListener(queues = "stock.release.stock.queue")
 @Service("wareSkuService")
 public class WareSkuServiceImpl extends ServiceImpl<WareSkuDao, WareSkuEntity> implements WareSkuService {
 
@@ -51,6 +55,26 @@ public class WareSkuServiceImpl extends ServiceImpl<WareSkuDao, WareSkuEntity> i
 
     @Resource
     WareOrderTaskDetailService orderTaskDetailService;
+
+    @RabbitHandler
+    public void handleStockLockedRelease(StockLockedTo to, Message message){
+
+        StockDetailTo detail = to.getDetail();
+        Long skuId = detail.getSkuId();
+        Long detailId = detail.getId();
+        //解锁
+        // 1.查询数据库关于这个订单的锁定库存信息
+        // 有：证明库存锁定成功
+        //     解锁看订单情况 1.没有订单，必须解锁  2.有订单。不是解锁库存  订单状态：已取消，解锁库存 没取消，不能解锁
+        // 无：库存锁定失败，库存回滚，无需解锁
+        WareOrderTaskDetailEntity orderTaskDetail = orderTaskDetailService.getById(detailId);
+        if(orderTaskDetail != null){
+            // 解锁
+            Long id = to.getId();
+        }else {
+            // 无需解锁
+        }
+    }
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
@@ -133,6 +157,10 @@ public class WareSkuServiceImpl extends ServiceImpl<WareSkuDao, WareSkuEntity> i
     @Override
     public boolean orderLockStock(WareSkuLockVo vo) {
 
+        /**
+         * 保存工作单的详情
+         * 追溯
+         */
         WareOrderTaskEntity taskEntity = new WareOrderTaskEntity();
         taskEntity.setOrderSn(vo.getOrderSn());
         orderTaskService.save(taskEntity);
