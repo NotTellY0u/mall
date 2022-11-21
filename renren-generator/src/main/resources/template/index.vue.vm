@@ -57,7 +57,8 @@
 </template>
 
 <script>
-  import AddOrUpdate from './${pathName}-add-or-update'
+  import AddOrUpdate from './'
+
   export default {
     data () {
       return {

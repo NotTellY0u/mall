@@ -4,7 +4,6 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import me.lin.mall.common.utils.PageUtils;
 import me.lin.mall.product.entity.AttrGroupEntity;
 import me.lin.mall.product.vo.AttrGroupWithAttrsVo;
-import me.lin.mall.product.vo.SkuItemVo;
 import me.lin.mall.product.vo.SpuItemAttrGroupVo;
 
 import java.util.List;

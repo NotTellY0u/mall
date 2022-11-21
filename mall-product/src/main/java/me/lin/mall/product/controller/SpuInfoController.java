@@ -1,17 +1,15 @@
 package me.lin.mall.product.controller;
 
-import java.util.Arrays;
-import java.util.Map;
-
-import me.lin.mall.product.entity.SpuInfoDescEntity;
+import me.lin.mall.common.utils.PageUtils;
+import me.lin.mall.common.utils.R;
+import me.lin.mall.product.entity.SpuInfoEntity;
+import me.lin.mall.product.service.SpuInfoService;
 import me.lin.mall.product.vo.SpuSaveVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import me.lin.mall.product.entity.SpuInfoEntity;
-import me.lin.mall.product.service.SpuInfoService;
-import me.lin.mall.common.utils.PageUtils;
-import me.lin.mall.common.utils.R;
+import java.util.Arrays;
+import java.util.Map;
 
 
 

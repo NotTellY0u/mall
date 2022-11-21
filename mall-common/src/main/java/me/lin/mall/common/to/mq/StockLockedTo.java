@@ -2,8 +2,6 @@ package me.lin.mall.common.to.mq;
 
 import lombok.Data;
 
-import java.util.List;
-
 @Data
 public class StockLockedTo {
 

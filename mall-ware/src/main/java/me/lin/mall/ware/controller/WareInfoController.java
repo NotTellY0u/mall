@@ -7,7 +7,6 @@ import me.lin.mall.ware.service.WareInfoService;
 import me.lin.mall.ware.vo.FareVo;
 import org.springframework.web.bind.annotation.*;
 
-import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Map;
 

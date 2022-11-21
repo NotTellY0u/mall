@@ -2,7 +2,6 @@ package me.lin.mall.product.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import me.lin.mall.common.utils.PageUtils;
-import me.lin.mall.product.entity.SpuInfoDescEntity;
 import me.lin.mall.product.entity.SpuInfoEntity;
 import me.lin.mall.product.vo.SpuSaveVo;
 

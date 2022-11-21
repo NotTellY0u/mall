@@ -1,11 +1,9 @@
 package me.lin.mall.common.utils;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
 import org.apache.http.HttpStatus;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 

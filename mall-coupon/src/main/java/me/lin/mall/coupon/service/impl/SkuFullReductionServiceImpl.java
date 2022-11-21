@@ -1,10 +1,18 @@
 package me.lin.mall.coupon.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import me.lin.mall.common.to.MemberPrice;
 import me.lin.mall.common.to.SkuReductionTo;
+import me.lin.mall.common.utils.PageUtils;
+import me.lin.mall.common.utils.Query;
+import me.lin.mall.coupon.dao.SkuFullReductionDao;
 import me.lin.mall.coupon.entity.MemberPriceEntity;
+import me.lin.mall.coupon.entity.SkuFullReductionEntity;
 import me.lin.mall.coupon.entity.SkuLadderEntity;
 import me.lin.mall.coupon.service.MemberPriceService;
+import me.lin.mall.coupon.service.SkuFullReductionService;
 import me.lin.mall.coupon.service.SkuLadderService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,16 +22,6 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import me.lin.mall.common.utils.PageUtils;
-import me.lin.mall.common.utils.Query;
-
-import me.lin.mall.coupon.dao.SkuFullReductionDao;
-import me.lin.mall.coupon.entity.SkuFullReductionEntity;
-import me.lin.mall.coupon.service.SkuFullReductionService;
 
 
 /**

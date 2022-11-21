@@ -10,7 +10,6 @@ import me.lin.mall.product.entity.SkuImagesEntity;
 import me.lin.mall.product.entity.SkuInfoEntity;
 import me.lin.mall.product.entity.SpuInfoDescEntity;
 import me.lin.mall.product.service.*;
-import me.lin.mall.product.vo.Attr;
 import me.lin.mall.product.vo.SkuItemSaleAttrVo;
 import me.lin.mall.product.vo.SkuItemVo;
 import me.lin.mall.product.vo.SpuItemAttrGroupVo;

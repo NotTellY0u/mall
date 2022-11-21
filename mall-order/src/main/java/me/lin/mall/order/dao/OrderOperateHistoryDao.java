@@ -1,7 +1,7 @@
 package me.lin.mall.order.dao;
 
-import me.lin.mall.order.entity.OrderOperateHistoryEntity;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import me.lin.mall.order.entity.OrderOperateHistoryEntity;
 import org.apache.ibatis.annotations.Mapper;
 
 /**

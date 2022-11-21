@@ -13,7 +13,6 @@ import com.github.pagehelper.PageHelper;
 import io.renren.config.MongoManager;
 import io.renren.dao.GeneratorDao;
 import io.renren.dao.MongoDBGeneratorDao;
-import io.renren.entity.mongo.MongoDefinition;
 import io.renren.factory.MongoDBCollectionFactory;
 import io.renren.utils.GenUtils;
 import io.renren.utils.PageUtils;

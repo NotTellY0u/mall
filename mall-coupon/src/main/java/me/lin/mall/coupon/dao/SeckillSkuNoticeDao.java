@@ -1,7 +1,7 @@
 package me.lin.mall.coupon.dao;
 
-import me.lin.mall.coupon.entity.SeckillSkuNoticeEntity;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import me.lin.mall.coupon.entity.SeckillSkuNoticeEntity;
 import org.apache.ibatis.annotations.Mapper;
 
 /**

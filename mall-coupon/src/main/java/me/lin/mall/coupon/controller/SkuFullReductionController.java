@@ -1,16 +1,15 @@
 package me.lin.mall.coupon.controller;
 
-import java.util.Arrays;
-import java.util.Map;
-
 import me.lin.mall.common.to.SkuReductionTo;
+import me.lin.mall.common.utils.PageUtils;
+import me.lin.mall.common.utils.R;
+import me.lin.mall.coupon.entity.SkuFullReductionEntity;
+import me.lin.mall.coupon.service.SkuFullReductionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import me.lin.mall.coupon.entity.SkuFullReductionEntity;
-import me.lin.mall.coupon.service.SkuFullReductionService;
-import me.lin.mall.common.utils.PageUtils;
-import me.lin.mall.common.utils.R;
+import java.util.Arrays;
+import java.util.Map;
 
 
 

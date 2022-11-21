@@ -1,7 +1,7 @@
 package me.lin.mall.member.dao;
 
-import me.lin.mall.member.entity.MemberReceiveAddressEntity;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import me.lin.mall.member.entity.MemberReceiveAddressEntity;
 import org.apache.ibatis.annotations.Mapper;
 
 /**

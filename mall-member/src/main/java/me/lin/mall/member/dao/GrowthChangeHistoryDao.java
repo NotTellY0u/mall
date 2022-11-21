@@ -1,7 +1,7 @@
 package me.lin.mall.member.dao;
 
-import me.lin.mall.member.entity.GrowthChangeHistoryEntity;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import me.lin.mall.member.entity.GrowthChangeHistoryEntity;
 import org.apache.ibatis.annotations.Mapper;
 
 /**

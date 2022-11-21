@@ -1,7 +1,7 @@
 package me.lin.mall.product.dao;
 
-import me.lin.mall.product.entity.SkuImagesEntity;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import me.lin.mall.product.entity.SkuImagesEntity;
 import org.apache.ibatis.annotations.Mapper;
 
 /**

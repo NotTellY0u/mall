@@ -1,7 +1,9 @@
 package me.lin.mall.search.thread;
 
 import java.math.BigDecimal;
-import java.util.concurrent.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * @Author Fibonacci

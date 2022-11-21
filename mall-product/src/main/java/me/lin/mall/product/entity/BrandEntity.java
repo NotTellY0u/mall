@@ -2,9 +2,6 @@ package me.lin.mall.product.entity;
 
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-
-import java.io.Serializable;
-import java.util.Date;
 import lombok.Data;
 import me.lin.mall.common.valid.AddGroup;
 import me.lin.mall.common.valid.ListValue;
@@ -13,6 +10,7 @@ import me.lin.mall.common.valid.UpdateStatusGroup;
 import org.hibernate.validator.constraints.URL;
 
 import javax.validation.constraints.*;
+import java.io.Serializable;
 
 /**
  * 品牌

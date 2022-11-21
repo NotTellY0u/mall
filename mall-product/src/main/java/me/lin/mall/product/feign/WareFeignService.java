@@ -1,7 +1,6 @@
 package me.lin.mall.product.feign;
 
 import me.lin.mall.common.utils.R;
-import me.lin.mall.product.vo.SkuHasStockVo;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;

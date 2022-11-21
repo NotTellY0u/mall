@@ -1,8 +1,7 @@
 package me.lin.mall.product.dao;
 
-import me.lin.mall.product.entity.AttrGroupEntity;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import me.lin.mall.product.vo.SkuItemVo;
+import me.lin.mall.product.entity.AttrGroupEntity;
 import me.lin.mall.product.vo.SpuItemAttrGroupVo;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;

@@ -1,7 +1,7 @@
 package me.lin.mall.ware.dao;
 
-import me.lin.mall.ware.entity.PurchaseDetailEntity;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import me.lin.mall.ware.entity.PurchaseDetailEntity;
 import org.apache.ibatis.annotations.Mapper;
 
 /**

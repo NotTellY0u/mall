@@ -1,19 +1,14 @@
 package me.lin.mall.member.controller;
 
-import java.util.Arrays;
-import java.util.Map;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
-import me.lin.mall.member.entity.MemberLevelEntity;
-import me.lin.mall.member.service.MemberLevelService;
 import me.lin.mall.common.utils.PageUtils;
 import me.lin.mall.common.utils.R;
+import me.lin.mall.member.entity.MemberLevelEntity;
+import me.lin.mall.member.service.MemberLevelService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Arrays;
+import java.util.Map;
 
 
 

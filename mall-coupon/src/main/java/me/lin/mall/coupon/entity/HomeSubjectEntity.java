@@ -2,10 +2,9 @@ package me.lin.mall.coupon.entity;
 
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import lombok.Data;
 
 import java.io.Serializable;
-import java.util.Date;
-import lombok.Data;
 
 /**
  * 首页专题表【jd首页下面很多专题，每个专题链接新的页面，展示专题商品信息】

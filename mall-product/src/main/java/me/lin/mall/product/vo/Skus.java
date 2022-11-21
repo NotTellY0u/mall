@@ -1,8 +1,6 @@
 package me.lin.mall.product.vo;
 
 import lombok.Data;
-import me.lin.mall.product.vo.Attr;
-import me.lin.mall.product.vo.MemberPrice;
 
 import java.math.BigDecimal;
 import java.util.List;
