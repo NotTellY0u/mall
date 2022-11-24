@@ -1,6 +1,7 @@
 package me.lin.mall.order.service.impl;
 
 import com.alibaba.fastjson.TypeReference;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
@@ -202,6 +203,11 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
             }
         }
 
+    }
+
+    @Override
+    public OrderEntity getOrderByOrderSn(String orderSn) {
+        return this.getOne(new LambdaQueryWrapper<OrderEntity>().eq(OrderEntity::getOrderSn, orderSn));
     }
 
     /**

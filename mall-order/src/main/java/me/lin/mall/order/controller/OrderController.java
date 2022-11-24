@@ -25,6 +25,13 @@ public class OrderController {
     @Autowired
     private OrderService orderService;
 
+
+    @GetMapping("/status/{orderSn}")
+    public R getOrderStatus(@PathVariable("orderSn") String orderSn){
+        OrderEntity orderEntity = orderService.getOrderByOrderSn(orderSn);
+        return R.ok().setData(orderEntity);
+    }
+
     /**
      * 列表
      */
