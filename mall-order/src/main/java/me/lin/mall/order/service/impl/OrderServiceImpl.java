@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import me.lin.mall.common.exception.NoStockException;
+import me.lin.mall.common.to.mq.OrderTo;
 import me.lin.mall.common.utils.PageUtils;
 import me.lin.mall.common.utils.Query;
 import me.lin.mall.common.utils.R;
@@ -25,6 +26,8 @@ import me.lin.mall.order.service.OrderItemService;
 import me.lin.mall.order.service.OrderService;
 import me.lin.mall.order.to.OrderCreateTo;
 import me.lin.mall.order.vo.*;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.beans.BeanUtils;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.stereotype.Service;
@@ -44,6 +47,8 @@ import java.util.stream.Collectors;
 
 @Service("orderService")
 public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> implements OrderService {
+
+    final RabbitTemplate rabbitTemplate;
 
     final
     OrderItemService orderItemService;
@@ -67,7 +72,8 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
     StringRedisTemplate redisTemplate;
 
     private final ThreadLocal<OrderSubmitVo> confirmVoThreadLocal = new ThreadLocal<>();
-    public OrderServiceImpl(MemberFeignService memberFeignService, CartFeignService cartFeignService, ThreadPoolExecutor threadPoolExecutor, WmsFeignService wmsFeignService, StringRedisTemplate redisTemplate, ProductFeignService productFeignService, OrderItemService orderItemService) {
+    public OrderServiceImpl(RabbitTemplate rabbitTemplate, MemberFeignService memberFeignService, CartFeignService cartFeignService, ThreadPoolExecutor threadPoolExecutor, WmsFeignService wmsFeignService, StringRedisTemplate redisTemplate, ProductFeignService productFeignService, OrderItemService orderItemService) {
+        this.rabbitTemplate = rabbitTemplate;
         this.memberFeignService = memberFeignService;
         this.cartFeignService = cartFeignService;
         this.threadPoolExecutor = threadPoolExecutor;
@@ -190,6 +196,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
                         //库存锁定成功
                         responseVo.setOrderEntity(order.getOrder());
                         responseVo.setCode(0);
+                        rabbitTemplate.convertAndSend("order-event-exchange","order.create.order",order.getOrder());
                         return responseVo;
                     }else {
                         //锁定失败
@@ -208,6 +215,27 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
     @Override
     public OrderEntity getOrderByOrderSn(String orderSn) {
         return this.getOne(new LambdaQueryWrapper<OrderEntity>().eq(OrderEntity::getOrderSn, orderSn));
+    }
+
+    @Override
+    public void closeOrder(OrderEntity entity) {
+        // 查询当前订单的最新状态
+        OrderEntity orderEntity = this.getById(entity.getId());
+        // 关单
+        if(orderEntity.getStatus() == OrderStatusEnum.CREATE_NEW.getCode()){
+            OrderEntity updateOrder = new OrderEntity();
+            updateOrder.setId(orderEntity.getId());
+            // 关单
+            updateOrder.setStatus(OrderStatusEnum.CANCLED.getCode());
+            this.updateById(updateOrder);
+            OrderTo orderTo = new OrderTo();
+            BeanUtils.copyProperties(orderEntity,orderTo);
+            try {
+                rabbitTemplate.convertAndSend("order-event-exchange", "order.release.other", orderEntity);
+            }catch (Exception e){
+                
+            }
+        }
     }
 
     /**
