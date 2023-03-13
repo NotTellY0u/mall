@@ -9,6 +9,14 @@
 	<description>聚合服务</description>
 	<packaging>pom</packaging>
 
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<java.version>1.8</java.version>
+		<maven.compiler.source>1.8</maven.compiler.source>
+		<maven.compiler.target>1.8</maven.compiler.target>
+	</properties>
+
 	<modules>
 		<module>mall-search</module>
 		<module>mall-member</module>
@@ -16,12 +24,44 @@
 		<module>mall-ware</module>
 		<module>mall-coupon</module>
 		<module>mall-order</module>
-		<module>renren-fast</module>
-		<module>renren-generator</module>
 		<module>mall-common</module>
 		<module>mall-cart</module>
 		<module>mall-gateway</module>
 		<module>mall-third-party</module>
 		<module>mall-auth-server</module>
+		<module>renren-fast</module>
+		<module>renren-generator</module>
 	</modules>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+		</plugins>
+	</build>
+
+	<repositories>
+		<repository>
+			<id>public</id>
+			<name>aliyun nexus</name>
+			<url>http://maven.aliyun.com/nexus/content/groups/public/</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+		</repository>
+	</repositories>
+	<pluginRepositories>
+		<pluginRepository>
+			<id>public</id>
+			<name>aliyun nexus</name>
+			<url>http://maven.aliyun.com/nexus/content/groups/public/</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</pluginRepository>
+	</pluginRepositories>
 </project>
