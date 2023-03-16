@@ -238,6 +238,19 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
         }
     }
 
+    @Override
+    public PayVo getOrderPay(String orderSn) {
+        PayVo payVo = new PayVo();
+        OrderEntity order = this.getOrderByOrderSn(orderSn);
+        payVo.setTotal_amount(String.valueOf(order.getPayAmount().setScale(2, BigDecimal.ROUND_UP)));
+        payVo.setOut_trade_no(order.getOrderSn());
+        List<OrderItemEntity> list = orderItemService.list(new LambdaQueryWrapper<OrderItemEntity>().eq(OrderItemEntity::getOrderSn, orderSn));
+        OrderItemEntity orderItemEntity = list.get(0);
+        payVo.setSubject(orderItemEntity.getSkuName());
+        payVo.setBody(orderItemEntity.getSkuAttrsVals());
+        return payVo;
+    }
+
     /**
      * 保存订单数据
      * @param order 订单信息
@@ -247,10 +260,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
         orderEntity.setModifyTime(new Date());
         this.save(orderEntity);
         List<OrderItemEntity> orderItems = order.getOrderItems();
-
         orderItemService.saveBatch(orderItems);
-
-
     }
 
     private OrderCreateTo createOrder(){

@@ -5,6 +5,7 @@ import me.lin.mall.common.utils.PageUtils;
 import me.lin.mall.order.entity.OrderEntity;
 import me.lin.mall.order.vo.OrderConfirmVo;
 import me.lin.mall.order.vo.OrderSubmitVo;
+import me.lin.mall.order.vo.PayVo;
 import me.lin.mall.order.vo.SubmitOrderResponseVo;
 
 import java.util.Map;
@@ -47,5 +48,7 @@ public interface OrderService extends IService<OrderEntity> {
      * @param entity 订单信息
      */
     void closeOrder(OrderEntity entity);
+
+    PayVo getOrderPay(String orderSn);
 }
 
