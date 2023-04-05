@@ -7,6 +7,7 @@ import lombok.Data;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 /**
  * 订单
@@ -190,4 +191,5 @@ public class OrderEntity implements Serializable {
 	 */
 	private Date modifyTime;
 
+	private List<OrderItemEntity> itemEntities;
 }
